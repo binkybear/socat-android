@@ -1,5 +1,5 @@
 nl source: configure.in
-dnl Copyright Gerhard Rieger 2001-2008
+dnl Copyright Gerhard Rieger 2001-2012
 dnl Published under the GNU General Public License V.2, see file COPYING
 
 dnl Process this file with autoconf to produce a configure script.
@@ -1386,6 +1386,9 @@ AC_BASIC_TYPE([#include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>], socklen_t, HAVE_BASIC_SOCKLEN_T,
 	sc_cv_type_socklent_basic)
+
+AC_BASIC_TYPE([#include <sys/types.h>
+#include <unistd.h>], off_t, HAVE_BASIC_OFF_T, sc_cv_type_off_basic)
 
 AC_BASIC_TYPE([#include <sys/types.h>
 #include <unistd.h>], off64_t, HAVE_BASIC_OFF64_T, sc_cv_type_off64_basic)
