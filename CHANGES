@@ -27,6 +27,11 @@ corrections:
 
 	minor corrections in doc (2x)
 
+porting:
+	building socat on systems that predefined the CFLAGS environment to
+	contain -Wall failed (esp.RedHat). Thanks to Paul Wouters for reporting
+	this problem and to Simon Matter for providing the patch
+
 ####################### V 2.0.0-b7:
 
 security:
