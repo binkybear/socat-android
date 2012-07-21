@@ -1551,8 +1551,8 @@ testchain () {
     if ! eval $NUMCOND; then :; else
     $PRINTF "test $F_n %s... " $N "$title"
     (echo "$da"; rsleep $T) |$SOCAT $opts "$arg1" "$arg2" >"$tf" 2>"$te" &
-    export rc1=$!
-    wait $rc1
+    export pid1=$!
+    wait $pid1
     if [ "$?" != 0 ]; then
 	$PRINTF "$FAILED: $SOCAT:\n"
 	echo "$SOCAT $opts $arg1 $arg2"
@@ -3697,6 +3697,14 @@ testchain "$N" "$TEST" "stdio" "test|^test|test|^test|pipe" "$opts" "><><><><"
 esac
 N=$((N+1))
 
+NAME=LONGLEFTCHAIN
+case "$TESTS" in
+*%functions%*|*%chain%*|*%$NAME%*)
+TEST="$NAME: four-tests+pipe vs. stdio"
+testchain "$N" "$TEST" "test|^test|test|^test|test|^test|test|^test|stdio" "pipe" "$opts" "><><><><><><><><"
+esac
+N=$((N+1))
+
 NAME=TOWLONGCHAINS
 case "$TESTS" in
 *%functions%*|*%chain%*|*%$NAME%*)
@@ -4118,7 +4126,7 @@ te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
 # we have a normal tcp echo listening - so the socks header must appear in answer
-CMD2="$SOCAT tcp4-l:$PORT,reuseaddr exec:\"./socks4echo.sh\""
+CMD2="$SOCAT $opts tcp4-l:$PORT,reuseaddr exec:\"./socks4echo.sh\""
 #CMD="$SOCAT $opts - socks4:$LOCALHOST:32.98.76.54:32109,pf=ip4,socksport=$PORT",socksuser="nobody"
 CMD="$SOCAT $opts - socks4:32.98.76.54:32109,socksuser=nobody|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
@@ -4163,7 +4171,7 @@ te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
 # we have a normal tcp echo listening - so the socks header must appear in answer
-CMD2="$SOCAT tcp6-l:$PORT,reuseaddr exec:\"./socks4echo.sh\""
+CMD2="$SOCAT $opts tcp6-l:$PORT,reuseaddr exec:\"./socks4echo.sh\""
 CMD="$SOCAT $opts - socks4:$LOCALHOST6:32.98.76.54:32109,socksport=$PORT",socksuser="nobody"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
@@ -4208,7 +4216,7 @@ te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
 # we have a normal tcp echo listening - so the socks header must appear in answer
-CMD2="$SOCAT tcp4-l:$PORT,reuseaddr exec:\"./socks4a-echo.sh\""
+CMD2="$SOCAT $opts tcp4-l:$PORT,reuseaddr exec:\"./socks4a-echo.sh\""
 #CMD="$SOCAT $opts - socks4a:$LOCALHOST:localhost:32109,pf=ip4,socksport=$PORT",socksuser="nobody"
 CMD="$SOCAT $opts - socks4a:localhost:32109,socksuser=nobody|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
@@ -4253,7 +4261,7 @@ te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
 # we have a normal tcp echo listening - so the socks header must appear in answer
-CMD2="$SOCAT tcp6-l:$PORT,reuseaddr exec:\"./socks4a-echo.sh\""
+CMD2="$SOCAT $opts tcp6-l:$PORT,reuseaddr exec:\"./socks4a-echo.sh\""
 CMD="$SOCAT $opts - socks4a:$LOCALHOST6:localhost:32109,socksport=$PORT",socksuser="nobody"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
@@ -4298,8 +4306,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
-#CMD2="$SOCAT tcp4-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
-CMD2="$SOCAT tcp4-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh\""
+#CMD2="$SOCAT $opts tcp4-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
+CMD2="$SOCAT $opts tcp4-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh\""
 #CMD="$SOCAT $opts - proxy:$LOCALHOST:127.0.0.1:1000,pf=ip4,proxyport=$PORT"
 CMD="$SOCAT $opts - proxy:127.0.0.1:1000|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
@@ -4344,8 +4352,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
-#CMD2="$SOCAT tcp6-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
-CMD2="$SOCAT tcp6-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh\""
+#CMD2="$SOCAT $opts tcp6-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
+CMD2="$SOCAT $opts tcp6-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh\""
 CMD="$SOCAT $opts - proxy:$LOCALHOST6:127.0.0.1:1000,proxyport=$PORT"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}2\" &"
@@ -4571,8 +4579,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"; da="$da$($ECHO '\r')"
-#CMD2="$SOCAT tcp-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
-CMD2="$SOCAT tcp4-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh -w 2\""
+#CMD2="$SOCAT $opts tcp-l:$PORT,crlf system:\"read; read; $ECHO \\\"HTTP/1.0 200 OK\n\\\"; cat\""
+CMD2="$SOCAT $opts tcp4-l:$PORT,reuseaddr,crlf exec:\"/bin/bash proxyecho.sh -w 2\""
 #CMD="$SOCAT $opts - proxy:$LOCALHOST:127.0.0.1:1000,pf=ip4,proxyport=$PORT"
 CMD="$SOCAT $opts - proxy:127.0.0.1:1000|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
@@ -6137,6 +6145,7 @@ elif ! echo "$da1" |diff - "${tf}1" >"$tdiff"; then
 else
 echo "$da2" |eval "$CLI" >"${tf}2" 2>"${te}2"
 rc="$?"; kill "$pids" 2>/dev/null
+wait
 if [ $rc -ne 0 ]; then
     $PRINTF "$FAILED:\n"
     echo "$SRV &"
@@ -6152,7 +6161,6 @@ else
     numOK=$((numOK+1))
 fi # !( $? -ne 0)
 fi # !(rc -ne 0)
-wait
 fi ;; # NUMCOND, feats
 esac
 N=$((N+1))
@@ -6220,7 +6228,9 @@ eval "$SRV 2>${te}s &"
 pids=$!
 waitfile "$ts1"
 echo "$da1" |eval "$CLI" >"${tf}1" 2>"${te}1"
-if [ $? -ne 0 ]; then
+rc=$?
+wait
+if [ $rc -ne 0 ]; then
     kill "$pids" 2>/dev/null
     $PRINTF "$FAILED:\n"
     echo "$SRV &"
@@ -6241,7 +6251,6 @@ else
     $PRINTF "$OK\n"
     numOK=$((numOK+1))
 fi # !(rc -ne 0)
-wait
 fi ;; # NUMCOND
 esac
 N=$((N+1))
