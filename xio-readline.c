@@ -38,8 +38,8 @@ const union xioaddr_desc *xioaddrs_readline[] = {
    NULL
 };
 
-const struct optdesc opt_history_file = { "history-file", "history", OPT_HISTORY_FILE, GROUP_READLINE, PH_LATE, TYPE_STRING, OFUNC_OFFSET, (int)&((xiofile_t *)0)->stream.para.readline.history_file };
-const struct optdesc opt_prompt       = { "prompt",       NULL,      OPT_PROMPT,       GROUP_READLINE, PH_LATE, TYPE_STRING, OFUNC_OFFSET, (int)&((xiofile_t *)0)->stream.para.readline.prompt };
+const struct optdesc opt_history_file = { "history-file", "history", OPT_HISTORY_FILE, GROUP_READLINE, PH_LATE, TYPE_STRING, OFUNC_OFFSET, XIO_OFFSETOF(para.readline.history_file) };
+const struct optdesc opt_prompt       = { "prompt",       NULL,      OPT_PROMPT,       GROUP_READLINE, PH_LATE, TYPE_STRING, OFUNC_OFFSET, XIO_OFFSETOF(para.readline.prompt) };
 const struct optdesc opt_noprompt     = { "noprompt",     NULL,      OPT_NOPROMPT,     GROUP_READLINE, PH_LATE, TYPE_BOOL,   OFUNC_SPEC,   0 };
 const struct optdesc opt_noecho       = { "noecho",       NULL,      OPT_NOECHO,       GROUP_READLINE, PH_LATE, TYPE_STRING, OFUNC_SPEC,   0 };
 
