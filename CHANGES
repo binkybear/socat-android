@@ -6,6 +6,12 @@ corrections:
 
 	ftruncate64 cut its argument to 32 bits on systems with 32 bit long type
 
+	with unidirectional EXEC and SYSTEM a close() operation was performed
+	on a random number which could result in hanging e.a.
+
+	fixed a compile problem caused by size_t/socklen_t mismatch on 64bit
+	systems
+
 ####################### V 2.0.0-b7:
 
 security:

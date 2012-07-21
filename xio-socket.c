@@ -1,5 +1,5 @@
 /* source: xio-socket.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for socket related functions, and the
@@ -245,7 +245,7 @@ int xioopen_socket_connect(int argc, const char *argv[], struct opt *opts,
    int proto;
    int socktype = SOCK_STREAM;
    int needbind = 0;
-   union sockaddr_union them;  socklen_t themlen;
+   union sockaddr_union them;  socklen_t themlen; size_t themsize;
    union sockaddr_union us;    socklen_t uslen = sizeof(us);
    int result;
 
@@ -273,16 +273,16 @@ int xioopen_socket_connect(int argc, const char *argv[], struct opt *opts,
    applyopts(-1, opts, PH_INIT);
    applyopts(-1, opts, PH_EARLY);
 
-   themlen = 0;
+   themsize = 0;
    if ((result =
-	dalan(address, (char *)&them.soa.sa_data, &themlen, sizeof(them)))
+	dalan(address, (char *)&them.soa.sa_data, &themsize, sizeof(them)))
        < 0) {
       Error1("data too long: \"%s\"", address);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", address);
    }      
    them.soa.sa_family = pf;
-   themlen +=
+   themlen = themsize +
 #if HAVE_STRUCT_SOCKADDR_SALEN
       sizeof(them.soa.sa_len) +
 #endif
@@ -326,7 +326,7 @@ int xioopen_socket_listen(int argc, const char *argv[], struct opt *opts,
    int pf;
    int proto;
    int socktype = SOCK_STREAM;
-   union sockaddr_union us;  socklen_t uslen;
+   union sockaddr_union us;  socklen_t uslen; size_t ussize;
    struct opt *opts0;
    int result;
 
@@ -351,15 +351,15 @@ int xioopen_socket_listen(int argc, const char *argv[], struct opt *opts,
    /*retropt_int(opts, OPT_IP_PROTOCOL, &proto);*/
 
    socket_init(0, &us);
-   uslen = 0;
+   ussize = 0;
    if ((result =
-	dalan(usname, (char *)&us.soa.sa_data, &uslen, sizeof(us)))
+	dalan(usname, (char *)&us.soa.sa_data, &ussize, sizeof(us)))
        < 0) {
       Error1("data too long: \"%s\"", usname);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", usname);
    }
-   uslen += sizeof(us.soa.sa_family)
+   uslen = ussize + sizeof(us.soa.sa_family)
 #if HAVE_STRUCT_SOCKADDR_SALEN
       + sizeof(us.soa.sa_len)
 #endif
@@ -420,8 +420,8 @@ int _xioopen_socket_sendto(const char *pfname, const char *type,
    int rw = (xioflags&XIO_ACCMODE);
    char *garbage;
    union sockaddr_union us = {{0}};
-   socklen_t uslen = 0;
-   socklen_t themlen = 0;
+   socklen_t uslen = 0;   size_t ussize;
+   size_t themsize;
    int pf;
    int socktype = SOCK_RAW;
    int proto;
@@ -449,16 +449,16 @@ int _xioopen_socket_sendto(const char *pfname, const char *type,
    /*retropt_int(opts, OPT_IP_PROTOCOL, &proto);*/
 
    xfd->peersa.soa.sa_family = pf;
-   themlen = 0;
+   themsize = 0;
    if ((result =
-	dalan(address, (char *)&xfd->peersa.soa.sa_data, &themlen,
+	dalan(address, (char *)&xfd->peersa.soa.sa_data, &themsize,
 	      sizeof(xfd->peersa)))
        < 0) {
       Error1("data too long: \"%s\"", address);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", address);
-   }      
-   xfd->salen = themlen + sizeof(sa_family_t)
+   }
+   xfd->salen = themsize + sizeof(sa_family_t)
 #if HAVE_STRUCT_SOCKADDR_SALEN
       + sizeof(xfd->peersa.soa.sa_len)
 #endif
@@ -466,7 +466,7 @@ int _xioopen_socket_sendto(const char *pfname, const char *type,
 #if HAVE_STRUCT_SOCKADDR_SALEN
    xfd->peersa.soa.sa_len =
       sizeof(xfd->peersa.soa.sa_len) + sizeof(xfd->peersa.soa.sa_family) +
-      themlen;
+      themsize;
 #endif
 
    /* ...res_opts[] */
@@ -480,16 +480,16 @@ int _xioopen_socket_sendto(const char *pfname, const char *type,
    xfd->dtype = XIODATA_RECVFROM;
 
    if (retropt_string(opts, OPT_BIND, &bindstring) == 0) {
-      uslen = 0;
+      ussize = 0;
       if ((result =
-	   dalan(bindstring, (char *)&us.soa.sa_data, &uslen, sizeof(us)))
+	   dalan(bindstring, (char *)&us.soa.sa_data, &ussize, sizeof(us)))
 	  < 0) {
 	 Error1("data too long: \"%s\"", bindstring);
       } else if (result > 0) {
 	 Error1("syntax error in \"%s\"", bindstring);
       }
       us.soa.sa_family = pf;
-      uslen += sizeof(sa_family_t)
+      uslen = ussize + sizeof(sa_family_t)
 #if HAVE_STRUCT_SOCKADDR_SALEN
 	 + sizeof(us.soa.sa_len)
 #endif
@@ -521,7 +521,7 @@ int xioopen_socket_recvfrom(int argc, const char *argv[], struct opt *opts,
    const char *address = argv[4];
    char *garbage;
    union sockaddr_union *us = &xfd->para.socket.la;
-   socklen_t uslen = sizeof(*us);
+   socklen_t uslen; size_t ussize;
    int pf, socktype, proto;
    char *rangename;
    int result;
@@ -551,16 +551,16 @@ int xioopen_socket_recvfrom(int argc, const char *argv[], struct opt *opts,
    retropt_int(opts, OPT_SO_TYPE, &socktype);
    /*retropt_int(opts, OPT_IP_PROTOCOL, &proto);*/
 
-   uslen = 0;
+   ussize = 0;
    if ((result =
-	dalan(address, (char *)&us->soa.sa_data, &uslen, sizeof(*us)))
+	dalan(address, (char *)&us->soa.sa_data, &ussize, sizeof(*us)))
        < 0) {
       Error1("data too long: \"%s\"", address);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", address);
    }      
    us->soa.sa_family = pf;
-   uslen += sizeof(us->soa.sa_family)
+   uslen = ussize + sizeof(us->soa.sa_family)
 #if HAVE_STRUCT_SOCKADDR_SALEN
       + sizeof(us->soa.sa_len);
 #endif
@@ -597,7 +597,7 @@ int xioopen_socket_recv(int argc, const char *argv[], struct opt *opts,
    const char *address = argv[4];
    char *garbage;
    union sockaddr_union us;
-   socklen_t uslen = sizeof(us);
+   socklen_t uslen; size_t ussize;
    int pf, socktype, proto;
    char *rangename;
    int result;
@@ -627,16 +627,16 @@ int xioopen_socket_recv(int argc, const char *argv[], struct opt *opts,
    retropt_int(opts, OPT_SO_TYPE, &socktype);
    /*retropt_int(opts, OPT_IP_PROTOCOL, &proto);*/
 
-   uslen = 0;
+   ussize = 0;
    if ((result =
-	dalan(address, (char *)&us.soa.sa_data, &uslen, sizeof(us)))
+	dalan(address, (char *)&us.soa.sa_data, &ussize, sizeof(us)))
        < 0) {
       Error1("data too long: \"%s\"", address);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", address);
    }      
    us.soa.sa_family = pf;
-   uslen += sizeof(sa_family_t)
+   uslen = ussize + sizeof(sa_family_t)
 #if HAVE_STRUCT_SOCKADDR_SALEN
       +sizeof(us.soa.sa_len)
 #endif
@@ -675,7 +675,7 @@ int xioopen_socket_datagram(int argc, const char *argv[], struct opt *opts,
    const char *address = argv[4];
    char *garbage;
    char *rangename;
-   socklen_t themlen;
+   size_t themsize;
    int pf;
    int result;
 
@@ -694,20 +694,20 @@ int xioopen_socket_datagram(int argc, const char *argv[], struct opt *opts,
    /*retropt_int(opts, OPT_IP_PROTOCOL, &proto);*/
 
    xfd->peersa.soa.sa_family = pf;
-   themlen = 0;
+   themsize = 0;
    if ((result =
-	dalan(address, (char *)&xfd->peersa.soa.sa_data, &themlen,
+	dalan(address, (char *)&xfd->peersa.soa.sa_data, &themsize,
 	      sizeof(xfd->peersa)))
        < 0) {
       Error1("data too long: \"%s\"", address);
    } else if (result > 0) {
       Error1("syntax error in \"%s\"", address);
    }
-   xfd->salen = themlen + sizeof(sa_family_t);
+   xfd->salen = themsize + sizeof(sa_family_t);
 #if HAVE_STRUCT_SOCKADDR_SALEN
    xfd->peersa.soa.sa_len =
       sizeof(xfd->peersa.soa.sa_len) + sizeof(xfd->peersa.soa.sa_family) +
-      themlen;
+      themsize;
 #endif
 
    if ((result =
