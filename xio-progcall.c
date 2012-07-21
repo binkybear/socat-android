@@ -1,5 +1,5 @@
 /* source: xio-progcall.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains common code dealing with program calls (exec, system) */
@@ -643,8 +643,10 @@ Warn1("xio-progcall.c: fd->howtoshut == %d", fd->howtoshut);
       gid_t group;
 
       if (withfork) {
-	 if (Signal(SIGCHLD, SIG_IGN) == SIG_ERR) {
-	    Warn1("signal(SIGCHLD, SIG_IGN): %s", strerror(errno));
+	 /* The child should have default handling for SIGCHLD. */
+	 /* In particular, it's not defined whether ignoring SIGCHLD is inheritable. */
+	 if (Signal(SIGCHLD, SIG_DFL) == SIG_ERR) {
+	    Warn1("signal(SIGCHLD, SIG_DFL): %s", strerror(errno));
 	 }
 
 	 /* dup2() the fds to desired values, close old fds, and apply late 

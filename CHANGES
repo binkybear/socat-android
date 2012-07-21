@@ -12,6 +12,9 @@ corrections:
 	fixed a compile problem caused by size_t/socklen_t mismatch on 64bit
 	systems
 
+	Debian bug 531078: socat execs children with SIGCHLD ignored; corrected
+	to default. Thanks to Martin Dorey for reporting this bug.
+
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
