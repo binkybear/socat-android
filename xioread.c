@@ -1,5 +1,5 @@
 /* source: xioread.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended read function */
@@ -178,7 +178,7 @@ ssize_t xioread(xiofile_t *file, void *buff, size_t bufsiz) {
        */
 #if defined(PF_PACKET) && defined(PACKET_OUTGOING)
       if (from.soa.sa_family == PF_PACKET) {
-	 if ((((struct sockaddr_ll *)&from.soa)->sll_pkttype & PACKET_OUTGOING)
+	 if ((from.ll.sll_pkttype & PACKET_OUTGOING)
 	    == 0) {
 	    errno = EAGAIN;  return -1;
 	 }

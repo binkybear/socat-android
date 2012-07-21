@@ -15,6 +15,9 @@ corrections:
 	Debian bug 531078: socat execs children with SIGCHLD ignored; corrected
 	to default. Thanks to Martin Dorey for reporting this bug.
 
+	added struct sockaddr_ll to union sockaddr_union to avoid "strict
+	aliasing" warnings (problem reported by Paul Wouters)
+
 	info message during socks connect showed bad port number on little
 	endian systems due to wrong byte order (thanks to Peter M. Galbavy for
 	bug report and patch)
