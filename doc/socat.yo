@@ -1858,7 +1858,7 @@ label(OPTION_BIND)dit(bf(tt(bind=<sockname>)))
 label(OPTION_CONNECT_TIMEOUT)dit(bf(tt(connect-timeout=<seconds>)))
    Abort the connection attempt after <seconds> [link(timeval)(TYPE_TIMEVAL)]
    with error status.
-label(OPTION_SO_BINDTODEV)dit(bf(tt(so-bindtodev=<interface>)))
+label(OPTION_SO_BINDTODEVICE)dit(bf(tt(so-bindtodev=<interface>)))
    Binds the socket to the given link(<interface>)(TYPE_INTERFACE).
    This option might require root privilege.
 label(OPTION_SO_BROADCAST)dit(bf(tt(broadcast)))

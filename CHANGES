@@ -12,6 +12,11 @@ corrections:
 	fixed a compile problem caused by size_t/socklen_t mismatch on 64bit
 	systems
 
+	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
+	Thanks to Jim Zimmerman for reporting.
+
+	minor corrections in doc
+
 ####################### V 2.0.0-b7:
 
 security:
