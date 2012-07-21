@@ -15,6 +15,10 @@ corrections:
 	Debian bug 531078: socat execs children with SIGCHLD ignored; corrected
 	to default. Thanks to Martin Dorey for reporting this bug.
 
+	info message during socks connect showed bad port number on little
+	endian systems due to wrong byte order (thanks to Peter M. Galbavy for
+	bug report and patch)
+
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
