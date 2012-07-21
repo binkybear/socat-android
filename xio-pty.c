@@ -1,5 +1,5 @@
 /* source: xio-pty.c */
-/* Copyright Gerhard Rieger 2002-2009 */
+/* Copyright Gerhard Rieger 2002-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for creating pty addresses */
@@ -182,7 +182,33 @@ static int xioopen_pty(const char *linkname, struct opt *opts, int xioflags, xio
    xfd->stream.dtype    = XIODATA_PTY;
 
    applyopts(ptyfd, opts, PH_FD);
-   
+
+   {
+      /* special handling of user-late etc.; with standard behaviour (up to
+	 1.7.1.1) they affected /dev/ptmx instead of /dev/pts/N */
+      uid_t uid = -1, gid = -1;
+      mode_t perm;
+
+      bool dont;
+      dont = retropt_uid(opts, OPT_USER_LATE, &uid);
+      dont &= retropt_gid(opts, OPT_GROUP_LATE, &gid);
+
+      if (!dont) {
+	 if (Chown(ptyname, uid, gid) < 0) {
+	    Error4("chown(\"%s\", %d, %d): %s",
+		   ptyname, uid, gid, strerror(errno));
+	 }
+      }
+
+      if (retropt_mode(opts, OPT_PERM_LATE, &perm) == 0) {
+	 if (Chmod(ptyname, perm) < 0) {
+	    Error3("chmod(\"%s\", %03o): %s",
+		   ptyname, perm, strerror(errno));
+	 }
+      }
+
+   }
+
    if (XIOWITHRD(rw))  xfd->stream.rfd = ptyfd;
    if (XIOWITHWR(rw))  xfd->stream.wfd = ptyfd;
    applyopts(ptyfd, opts, PH_LATE);
