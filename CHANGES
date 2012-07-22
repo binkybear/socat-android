@@ -75,6 +75,10 @@ corrections:
 	could lead to sporadic data loss when both fork option and exec address
 	were used. Thanks to Tetsuya Sodo for reporting this problem and
 	sending a patch
+ 
+	OpenSSL server failed with "no shared cipher" when using cipher aNULL.
+	Fixed by providing temporary DH parameters. Thanks to Philip Rowlands
+	for drawing my attention to this issue.
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
