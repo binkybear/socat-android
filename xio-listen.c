@@ -308,12 +308,6 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
 	    level = E_ERROR;
 #endif /* WITH_RETRY */
 
-#if WITH_UNIX
-	    /* with UNIX sockets: only listening parent is allowed to remove
-	       the socket file */
-	    xfd->opt_unlink_close = false;
-#endif /* WITH_UNIX */
-
 	    break;
 	 }
 
