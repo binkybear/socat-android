@@ -231,6 +231,8 @@ static int xioopen_unix_connect(int argc, const char *argv[], struct opt *opts, 
       return STAT_NORETRY;
    }
 
+   xfd->howtoshut = XIOSHUT_DOWN;
+
    name = argv[1];
    retropt_socket_pf(opts, &pf);
    retropt_bool(opts, OPT_UNIX_TIGHTSOCKLEN, &tight);
