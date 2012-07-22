@@ -82,6 +82,9 @@ corrections:
  
 	UDP-LISTEN slept 1s after accepting a connection. This is not required.
 	Thanks to Peter Valdemar Morch for reporting this issue
+ 
+	fixed a bug that could lead to error or socat crash after a client
+	connection with option retry had been established
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
