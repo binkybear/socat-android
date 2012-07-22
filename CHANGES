@@ -53,6 +53,10 @@ corrections:
 	socat option -x did not print packet direction, timestamp etc; thanks
 	to Anthony Sharobaiko for sending a patch
 
+	Marcus Meissner provided a patch that fixes invalid output and possible
+	process crash when socat prints info about an unnamed unix domain
+	socket
+
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
