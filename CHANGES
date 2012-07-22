@@ -37,7 +37,7 @@ corrections:
 	fixed a bug where socat might crash when connecting to a unix domain
 	socket using address GOPEN. Thanks to Martin Forssen for bug report and
 	patch.
- 
+
 	UDP-LISTEN would alway set SO_REUSEADDR even without fork option and
 	when user set it to 0. Thanks to Michal Svoboda for reporting this bug.
 
@@ -46,17 +46,17 @@ corrections:
 
 	TCP-CONNECT with option nonblock reported successful connect even when
 	it was still pending
- 
+
 	address option ioctl-intp failed with "unimplemented type 26". Thanks
 	to Jeremy W. Sherman for reporting and fixing that bug
- 
+
 	socat option -x did not print packet direction, timestamp etc; thanks
 	to Anthony Sharobaiko for sending a patch
 
 	Marcus Meissner provided a patch that fixes invalid output and possible
 	process crash when socat prints info about an unnamed unix domain
 	socket
- 
+
 	Michal Soltys reported the following problem and provided an initial
 	patch: when socat was interrupted, e.g. by SIGSTOP, and resumed during
 	data transfer only parts of the data might have been written.
@@ -64,25 +64,25 @@ corrections:
 	Option o-nonblock in combination with large transfer block sizes
 	may result in partial writes and/or EAGAIN errors that were not handled
 	properly but resulted in data loss or process termination.
- 
+
 	Fixed a bug that could freeze socat when during assembly of a log
 	message a signal was handled that also printed a log message. socat
 	development had been aware that localtime() is not thread safe but had
 	only expected broken messages, not corrupted stack (glibc 2.11.1,
 	Ubuntu 10.4)
- 
+
 	an internal store for child pids was susceptible to pid reuse which
 	could lead to sporadic data loss when both fork option and exec address
 	were used. Thanks to Tetsuya Sodo for reporting this problem and
 	sending a patch
- 
+
 	OpenSSL server failed with "no shared cipher" when using cipher aNULL.
 	Fixed by providing temporary DH parameters. Thanks to Philip Rowlands
 	for drawing my attention to this issue.
- 
+
 	UDP-LISTEN slept 1s after accepting a connection. This is not required.
 	Thanks to Peter Valdemar Morch for reporting this issue
- 
+
 	fixed a bug that could lead to error or socat crash after a client
 	connection with option retry had been established
 
@@ -104,7 +104,7 @@ porting:
 
 	Cedril Priscal ported socat to Android (using Googles cross compiler).
 	The port includes the socat_buildscript_for_android.sh script
- 
+
 	added check for component ipi_spec_dst in struct in_pktinfo so
 	compilation does not fail on Cygwin (thanks to Peter Wagemans for
 	reporting this problem)
@@ -112,7 +112,7 @@ porting:
 	build failed on RHEL6 due to presence of fips.h; configure now checks
 	for fipsld too. Thanks to Andreas Gruenbacher for reporting this
 	problem
- 
+
 	check for netinet6/in6.h only when IPv6 is available and enabled
 
 	don't fail to compile when the following defines are missing:
@@ -125,6 +125,9 @@ porting:
 
 	fixed compiler warnings on Mac OS X 64bit. Thanks to Guy Harris for
 	providing the patch.
+
+	corrections for OpenEmbedded, especially termios SHIFT values and
+	ISPEED/OSPEED. Thanks to John Faith for providing the patch
 
 ####################### V 2.0.0-b7:
 
