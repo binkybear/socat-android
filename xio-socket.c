@@ -1926,7 +1926,7 @@ xiolog_ancillary_socket(struct cmsghdr *cmsg, int *num,
       cmsgname = "timestamp";
       cmsgenvn = "TIMESTAMP";
       { time_t t = tv->tv_sec; ctime_r(&t, valbuff); }
-      sprintf(strchr(valbuff, '\0')-1/*del \n*/, ", %06ld usecs", tv->tv_usec);
+      sprintf(strchr(valbuff, '\0')-1/*del \n*/, ", %06ld usecs", (long)tv->tv_usec);
       break;
 #endif /* defined(SO_TIMESTAMP) */
       ;
