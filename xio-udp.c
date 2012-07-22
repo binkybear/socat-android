@@ -275,7 +275,6 @@ int xioopen_ipdgram_listen(int argc, const char *argv[], struct opt *opts,
 	 if (Close(fd->stream.rfd) < 0) {
 	    Info2("close(%d): %s", fd->stream.rfd, strerror(errno));
 	 }
-	 Sleep(1);	/*! give child a chance to consume the old packet */
 
 	 continue;
       }
