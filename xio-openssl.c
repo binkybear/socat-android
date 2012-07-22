@@ -1,5 +1,5 @@
 /* source: xio-openssl.c */
-/* Copyright Gerhard Rieger 2002-2008 */
+/* Copyright Gerhard Rieger 2002-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the implementation of the openssl addresses */
@@ -1208,8 +1208,9 @@ ssize_t xioread_openssl(struct single *pipe, void *buff, size_t bufsiz) {
       case SSL_ERROR_WANT_WRITE:
       case SSL_ERROR_WANT_CONNECT:
       case SSL_ERROR_WANT_X509_LOOKUP:
-	 Error("nonblocking operation did not complete");
-	 break;	/*!*/
+	 Info("nonblocking operation did not complete");
+	 errno = EAGAIN;
+	 return -1;
       case SSL_ERROR_SYSCALL:
 	 if (ERR_peek_error() == 0) {
 	    if (ret == 0) {

@@ -4,6 +4,10 @@ corrections:
 	device /dev/ptmx instead of the pty (thanks to Matthew Cloke for
 	pointing me to this bug)
 
+	socats openssl addresses failed with "nonblocking operation did not
+	complete" when the peer performed a renegotiation. Thanks to Benjamin
+	Delpy for reporting this bug.
+
 	corrected the "fixed possible SIGSEGV" fix because SIGSEGV still might
 	occur under those conditions. Thanks to Toni Mattila for first
 	reporting this problem.
