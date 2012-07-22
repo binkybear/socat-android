@@ -1,5 +1,5 @@
 /* source: xiotransfer.c */
-/* Copyright Gerhard Rieger 2007-2008 */
+/* Copyright Gerhard Rieger 2007-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source file of the data transfer function */
@@ -227,7 +227,8 @@ int xiotransfer(xiofile_t *inpipe, xiofile_t *outpipe,
 	       }
 	    } else if (xioparams->verbhex) {
 	       int i;
-	       /*! prefix? */
+	       /* print prefix */
+	       xioprintblockheader(stderr, bytes, righttoleft);
 	       for (i = 0; i < bytes; ++i) {
 		  fprintf(stderr, " %02x", (*buff)[i]);
 	       }

@@ -49,6 +49,9 @@ corrections:
  
 	address option ioctl-intp failed with "unimplemented type 26". Thanks
 	to Jeremy W. Sherman for reporting and fixing that bug
+ 
+	socat option -x did not print packet direction, timestamp etc; thanks
+	to Anthony Sharobaiko for sending a patch
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
