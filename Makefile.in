@@ -1,5 +1,5 @@
 # source: Makefile.in
-# Copyright Gerhard Rieger 2001-2009
+# Copyright Gerhard Rieger 2001-2012
 # Published under the GNU General Public License V.2, see file COPYING
 
 # note: @...@ forms are filled in by configure script
@@ -23,6 +23,7 @@ VPATH = @srcdir@
 
 CC = @CC@
 CCOPTS = $(CCOPT) -Wall -Wno-parentheses
+CCOPTS = $(CCOPT)
 
 SYSDEFS = @SYSDEFS@
 CPPFLAGS = -I. @CPPFLAGS@
