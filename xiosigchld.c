@@ -1,5 +1,5 @@
 /* source: xiosigchld.c */
-/* Copyright Gerhard Rieger 2001-2008 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended child signal handler */
@@ -27,11 +27,9 @@ static struct _xiosigchld_child * _xiosigchld_find(pid_t pid);
 static struct _xiosigchld_child xio_childpids[XIO_MAXCHILDPIDS];
 
 #if 1 /*!!!*/
-/*!! with socat, at most 4 managed children exist */
-pid_t diedunknown1;	/* child died before it is registered */
-pid_t diedunknown2;
-pid_t diedunknown3;
-pid_t diedunknown4;
+/*!! with socat 1, at most 4 managed children existed */
+pid_t diedunknown[NUMUNKNOWN]; /* children that died before they were registered */
+size_t nextunknown;
 #endif
 
 
@@ -135,21 +133,14 @@ void childdied(int signum
       ++i;
    }
    if (i == XIO_MAXSOCK) {
-	 Info2("childdied(%d): cannot identify child %d", signum, pid);
-	 if (diedunknown1 == 0) {
-	    diedunknown1 = pid;
-	    Debug("saving pid in diedunknown1");
-	 } else if (diedunknown2 == 0) {
-	    diedunknown2 = pid;
-	    Debug("saving pid in diedunknown2");
-	 } else if (diedunknown3 == 0) {
-	     diedunknown3 = pid;
-	    Debug("saving pid in diedunknown3");
-	 } else {
-	    diedunknown4 = pid;
-	    Debug("saving pid in diedunknown4");
-	 }
+      Info2("childdied(%d): cannot identify child %d", signum, pid);
+      if (nextunknown == NUMUNKNOWN) {
+	 nextunknown = 0;
       }
+      diedunknown[nextunknown++] = pid;
+      Debug1("saving pid in diedunknown%u",
+	     nextunknown/*sic, for compatibility*/);
+   }
 #else
    entry = _xiosigchld_find(pid);
    if (entry == NULL) {

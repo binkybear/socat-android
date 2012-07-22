@@ -70,6 +70,11 @@ corrections:
 	development had been aware that localtime() is not thread safe but had
 	only expected broken messages, not corrupted stack (glibc 2.11.1,
 	Ubuntu 10.4)
+ 
+	an internal store for child pids was susceptible to pid reuse which
+	could lead to sporadic data loss when both fork option and exec address
+	were used. Thanks to Tetsuya Sodo for reporting this problem and
+	sending a patch
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.

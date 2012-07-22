@@ -1,14 +1,16 @@
-/* $Id$ */
-/* Copyright Gerhard Rieger 2006 */
+/* source: xiosigchld.h */
+/* Copyright Gerhard Rieger 2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 #ifndef __xiosigchld_h
 #define __xiosigchld_h 1
 
-extern pid_t diedunknown1;	/* child died before it is registered */
-extern pid_t diedunknown2;
-extern pid_t diedunknown3;
-extern pid_t diedunknown4;
+#define NUMUNKNOWN 4
+extern pid_t diedunknown[NUMUNKNOWN];	/* child died before it is registered */
+#define diedunknown1 (diedunknown[0])
+#define diedunknown2 (diedunknown[1])
+#define diedunknown3 (diedunknown[2])
+#define diedunknown4 (diedunknown[3])
 
 extern int xiosetsigchild(xiofile_t *xfd, int (*callback)(struct single *));
 extern void childdied(int signum
