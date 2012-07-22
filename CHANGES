@@ -37,6 +37,9 @@ corrections:
 	fixed a bug where socat might crash when connecting to a unix domain
 	socket using address GOPEN. Thanks to Martin Forssen for bug report and
 	patch.
+ 
+	UDP-LISTEN would alway set SO_REUSEADDR even without fork option and
+	when user set it to 0. Thanks to Michal Svoboda for reporting this bug.
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
