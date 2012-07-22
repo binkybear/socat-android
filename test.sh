@@ -3424,7 +3424,7 @@ wait
 fi ;; # NUMCOND
 esac
 N=$((N+1))
-set +vx
+#set +vx
 
 
 NAME=EXECIGNOREEOF
@@ -7729,6 +7729,7 @@ pid3=$!
 waittcp4port $p2 1
 $CMD 2>"${te}2" &
 pid2=$!
+usleep $MICROS
 waittcp4port $p1 1
 echo "$da1a" |$CMD1 2>>"${te}1a"
 echo "$da1b" |$CMD1 2>>"${te}1b"
@@ -8968,7 +8969,7 @@ fi ;; # NUMCOND
 esac
 PORT=$((PORT+1))
 N=$((N+1))
-set +vx
+#set +vx
 
 # there was a bug with udp-recvfrom and fork: terminating sub processes became
 # zombies because the master process caught SIGCHLD but did not wait()
@@ -9347,6 +9348,9 @@ elif [ "$ROOT" = root -a $(id -u) -ne 0 -a "$withroot" -eq 0 ]; then
     numCANT=$((numCANT+1))
 elif [ "$PF" = "IP6" ] && ( ! feat=$(testaddrs ip6) || ! runsip6 >/dev/null ); then
     $PRINTF "test $F_n $TEST... ${YELLOW}IP6 not available${NORMAL}\n" $N
+    numCANT=$((numCANT+1))
+elif ! testoptions $SCM_RECV >/dev/null; then
+    $PRINTF "test $F_n $TEST... ${YELLOW}option $SCM_RECV not available${NORMAL}\n" $N
     numCANT=$((numCANT+1))
 else
 tf="$td/test$N.stdout"
