@@ -2107,6 +2107,7 @@ int parseopts_table(const char **a, struct opt **opts,
 #endif /* HAVE_STRUCT_LINGER */
 
       case TYPE_INT_INT:
+      case TYPE_INT_INTP:
 	 if (!assign) {
 	    Error1("option \"%s\": values required", a0);
 	    continue;

@@ -46,6 +46,9 @@ corrections:
 
 	TCP-CONNECT with option nonblock reported successful connect even when
 	it was still pending
+ 
+	address option ioctl-intp failed with "unimplemented type 26". Thanks
+	to Jeremy W. Sherman for reporting and fixing that bug
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
