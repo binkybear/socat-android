@@ -91,7 +91,9 @@ static int xioopen_pty(const char *linkname, struct opt *opts, int xioflags, xio
    useptmx = true;
 #  endif /* !HAVE_OPENPTY */
 #else
-   useopenpty = true;
+# if HAVE_OPENPTY
+  useopenpty = true;
+#endif /* HAVE_OPENPTY */
 #endif /* ! (defined(HAVE_DEV_PTMX) || defined(HAVE_DEV_PTC)) */
 
 #if HAVE_POLL

@@ -1430,10 +1430,14 @@ const struct optname optionnames[] = {
 	IF_ANY    ("streams-i-push",	&opt_streams_i_push)
 #endif
 	IF_ANY    ("su",	&opt_substuser)
+#if defined(HAVE_SETGRENT) && defined(HAVE_GETGRENT) && defined(HAVE_ENDGRENT)
 	IF_ANY    ("su-d",	&opt_substuser_delayed)
+#endif
 	IF_ANY    ("su-e",	&opt_substuser_early)
 	IF_ANY    ("substuser",	&opt_substuser)
+#if defined(HAVE_SETGRENT) && defined(HAVE_GETGRENT) && defined(HAVE_ENDGRENT)
 	IF_ANY    ("substuser-delayed",	&opt_substuser_delayed)
+#endif
 	IF_ANY    ("substuser-early",	&opt_substuser_early)
 	IF_TERMIOS("susp",	&opt_vsusp)
 #ifdef VSWTC
@@ -3323,6 +3327,7 @@ int applyopts(int fd, struct opt *opts, enum e_phase phase) {
 #endif
 	    }
 	    break;
+#if defined(HAVE_SETGRENT) && defined(HAVE_GETGRENT) && defined(HAVE_ENDGRENT)
 	 case OPT_SUBSTUSER_DELAYED:
 	    {
 	       struct passwd *pwd;
@@ -3356,6 +3361,7 @@ int applyopts(int fd, struct opt *opts, enum e_phase phase) {
 	       delayeduser = true;
 	    }
 	    break;
+#endif
 	 case OPT_CHROOT_EARLY:
 	 case OPT_CHROOT:
 	    if (Chroot(opt->value.u_string) < 0) {

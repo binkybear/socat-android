@@ -1,5 +1,5 @@
 /* source: xio-process.h */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 #ifndef __xio_process_h_included
@@ -11,7 +11,9 @@ extern const struct optdesc opt_setuid_early;
 extern const struct optdesc opt_setuid;
 extern const struct optdesc opt_substuser_early;
 extern const struct optdesc opt_substuser;
+#if defined(HAVE_SETGRENT) && defined(HAVE_GETGRENT) && defined(HAVE_ENDGRENT)
 extern const struct optdesc opt_substuser_delayed;
+#endif
 extern const struct optdesc opt_chroot_early;
 extern const struct optdesc opt_chroot;
 extern const struct optdesc opt_setsid;
