@@ -56,6 +56,14 @@ corrections:
 	Marcus Meissner provided a patch that fixes invalid output and possible
 	process crash when socat prints info about an unnamed unix domain
 	socket
+ 
+	Michal Soltys reported the following problem and provided an initial
+	patch: when socat was interrupted, e.g. by SIGSTOP, and resumed during
+	data transfer only parts of the data might have been written.
+
+	Option o-nonblock in combination with large transfer block sizes
+	may result in partial writes and/or EAGAIN errors that were not handled
+	properly but resulted in data loss or process termination.
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.

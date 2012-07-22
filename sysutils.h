@@ -40,6 +40,8 @@ struct xiorange {
    union sockaddr_union netmask;
 } ;
 #endif /* _WITH_SOCKET */
+ 
+extern ssize_t writefull(int fd, const void *buff, size_t bytes);
 
 #if _WITH_SOCKET
 extern socklen_t socket_init(int af, union sockaddr_union *sa);

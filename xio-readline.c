@@ -185,9 +185,7 @@ ssize_t xioread_readline(struct single *pipe, void *buff, size_t bufsiz) {
 	 /* we must carriage return, because readline will first print the
 	    prompt */
 	 ssize_t writt;
-	 do {
-	    writt = Write(pipe->rfd, "\r", 1);
-	 } while (writt < 0 && errno == EINTR);
+	 writt = writefull(pipe->rfd, "\r", 1);
 	 if (writt < 0) {
 	    Warn2("write(%d, \"\\r\", 1): %s",
 		   pipe->rfd, strerror(errno));

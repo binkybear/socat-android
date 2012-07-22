@@ -1,5 +1,5 @@
 /* source: xiowrite.c */
-/* Copyright Gerhard Rieger 2001-2008 */
+/* Copyright Gerhard Rieger 2001-2012 */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended write function */
@@ -53,9 +53,7 @@ ssize_t xiowrite(xiofile_t *file, const void *buff, size_t bytes) {
    switch (pipe->dtype & XIODATA_WRITEMASK) {
 
    case XIOWRITE_STREAM:
-      do {
-	 writt = Write(fd, buff, bytes);
-      } while (writt < 0 && errno == EINTR);
+      writt = writefull(pipe->wfd, buff, bytes);
       if (writt < 0) {
 	 _errno = errno;
 	 switch (_errno) {
@@ -73,10 +71,6 @@ ssize_t xiowrite(xiofile_t *file, const void *buff, size_t bytes) {
 	 }
 	 errno = _errno;
 	 return -1;
-      }
-      if ((size_t)writt < bytes) {
-	 Warn2("write() only wrote "F_Zu" of "F_Zu" bytes",
-	       writt, bytes);
       }
       break;
 
@@ -125,19 +119,13 @@ ssize_t xiowrite(xiofile_t *file, const void *buff, size_t bytes) {
 
    case XIOWRITE_PIPE:
    case XIOWRITE_2PIPE:
-      do {
-	 writt = Write(fd, buff, bytes);
-      } while (writt < 0 && errno == EINTR);
+      writt = Write(pipe->wfd, buff, bytes);
       _errno = errno;
       if (writt < 0) {
 	 Error4("write(%d, %p, "F_Zu"): %s",
 		fd, buff, bytes, strerror(_errno));
 	 errno = _errno;
 	 return -1;
-      }
-      if ((size_t)writt < bytes) {
-	 Warn2("write() only wrote "F_Zu" of "F_Zu" bytes",
-	       writt, bytes);
       }
       break;
 

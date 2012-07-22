@@ -377,10 +377,7 @@ int _xioopen_socks4_connect(struct single *xfd,
       }
    }
 #endif /* WITH_MSGLEVEL <= E_DEBUG */
-   do {
-      result = Write(wfd, sockhead, headlen);
-   } while (result < 0 && errno == EINTR);
-   if (result < 0) {
+   if (writefull(wfd, sockhead, headlen) < 0) {
       Msg4(level, "write(%d, %p, "F_Zu"): %s",
 	   wfd, sockhead, headlen, strerror(errno));
       if (Close(wfd) < 0) {
