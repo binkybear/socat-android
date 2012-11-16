@@ -86,6 +86,9 @@ corrections:
 	fixed a bug that could lead to error or socat crash after a client
 	connection with option retry had been established
 
+	fixed configure.in bug on net/if.h check that caused IF_NAMESIZE to be
+	undefined
+
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
