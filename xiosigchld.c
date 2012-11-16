@@ -124,6 +124,7 @@ void childdied(int signum
 	 errno = _errno;
 	 return;
       }
+      if (num_child) num_child--;
 #if 0
    /*! indent */
    /* check if it was a registered child process */

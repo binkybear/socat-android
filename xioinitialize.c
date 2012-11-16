@@ -17,7 +17,7 @@ static int xioinitialized;
 xiofile_t *sock[XIO_MAXSOCK];
 int (*xiohook_newchild)(void);	/* xio calls this function in every new child
 				   process */
-
+int num_child = 0;
 
 /* call this function before calling any other xio function.
    With xioflags, you have to set the features that xio can make use of.
@@ -215,6 +215,7 @@ int xio_forked_inchild(void) {
    for (i=0; i<NUMUNKNOWN; ++i) {
       diedunknown[i] = 0;
    }
+   num_child = 0;
    xiodroplocks();
 #if WITH_FIPS
    if (xio_reset_fips_mode() != 0) {
@@ -273,6 +274,7 @@ pid_t xio_fork(bool subchild, int level) {
       return 0;
    }
 
+   num_child++;
    /* parent process */
    Notice1("forked off child process "F_pid, pid);
    /* gdb recommends to have env controlled sleep after fork */
