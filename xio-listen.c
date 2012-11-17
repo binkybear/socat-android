@@ -315,7 +315,7 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
 	    pid_t cpid = Getpid();
 	    Sigprocmask(SIG_UNBLOCK, &mask_sigchld, NULL);
 
-	    Info1("just born: client process "F_pid, cpid);
+	    Info1("just born: child process "F_pid, cpid);
 	    xiosetenvulong("PID", cpid, 1);
 
 	    if (Close(xfd->rfd) < 0) {
