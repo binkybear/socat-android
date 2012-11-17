@@ -89,6 +89,8 @@ corrections:
 	fixed configure.in bug on net/if.h check that caused IF_NAMESIZE to be
 	undefined
 
+	improved dev_t print format definition
+
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
