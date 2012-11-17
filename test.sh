@@ -103,6 +103,7 @@ rsleep () {
 
 #USLEEP=usleep
 F_n="%3d"	# format string for test numbers
+LC_ALL=C       # for timestamps format...
 LANG=C
 LANGUAGE=C	# knoppix
 UNAME=`uname`
@@ -152,7 +153,8 @@ esac
 case "$UNAME" in
 Linux)
     BROADCASTIF=eth0
-    SECONDADDR=127.0.0.2
+    SECONDADDR=127.1.0.1
+    SECONDMASK=255.255.0.0
     BCADDR=127.255.255.255
     BCIFADDR=$($IFCONFIG $BROADCASTIF |grep 'inet ' |awk '{print($2);}' |cut -d: -f2) ;;
 FreeBSD|NetBSD|OpenBSD)
@@ -1667,6 +1669,8 @@ ifprocess () {
     NetBSD)  l="$(ps -aj   |grep "^[^ ][^ ]*[ ][ ]*$(printf %5u $1) ")" ;;
     OpenBSD) l="$(ps -kaj  |grep "^........ $(printf %5u $1)")" ;;
     SunOS)   l="$(ps -fade |grep "^........ $(printf %5u $1)")" ;;
+     DragonFly)l="$(ps -faje |grep "^[^ ][^ ]*[ ][ ]*$(printf %5u $1)")" ;;
+    CYGWIN*)  l="$(ps -pafe |grep "^[^ ]*[ ][ ]*$1[ ]")" ;;
     *)       l="$(ps -fade |grep "^[^ ][^ ]*[ ][ ]*$(printf %5u $1) ")" ;;
     esac
     if [ -z "$l" ]; then
@@ -1690,6 +1694,8 @@ childprocess () {
     NetBSD)  l="$(ps -aj   |grep "^[^ ][^ ]*[ ][ ]*..... $(printf %5u $1)")" ;;
     OpenBSD) l="$(ps -aj   |grep "^........ ..... $(printf %5u $1)")" ;;
     SunOS)   l="$(ps -fade |grep "^........ ..... $(printf %5u $1)")" ;;
+    DragonFly)l="$(ps -faje |grep "^[^ ][^ ]*[ ][ ]*..... $(printf %5u $1)")" ;;
+    CYGWIN*)  l="$(ps -pafe |grep "^[^ ]*[ ][ ]*[^ ][^ ]*[ ][ ]*$1[ ]")" ;;
     *)       l="$(ps -fade |grep "^[^ ][^ ]*[ ][ ]*[0-9][0-9]**[ ][ ]*$(printf %5u $1) ")" ;;    esac
     if [ -z "$l" ]; then
 	return 1;
@@ -1712,6 +1718,16 @@ isdefunct () {
     *)       l="$(echo "$1" |grep ' <defunct>$')" ;;
     esac
     [ -n "$l" ];
+}
+
+# check if UNIX socket protocol is available on host
+runsunix () {
+    return 0;
+    $SOCAT /dev/null UNIX-LISTEN:"$td/unix.socket" 2>"$td/unix.stderr" &
+    pid=$!
+    usleep $MICROS
+    kill "$pid" 2>/dev/null
+    test ! -s "$td/unix.stderr"
 }
 
 unset HAVENOT_IP4
@@ -1768,22 +1784,66 @@ runsip6 () {
     return $l;
 }
 
+# check if TCP on IPv4 is available on host
+runstcp4 () {
+    return 0;
+#    PORT="$1"
+    $SOCAT /dev/null TCP4-LISTEN:$PORT 2>"$td/tcp4.stderr" &
+    pid=$!
+    usleep $MICROS
+    kill "$pid" 2>/dev/null
+    test ! -s "$td/tcp4.stderr"
+}
+
+# check if TCP on IPv6 is available on host
+runstcp6 () {
+    return 0;
+#    PORT="$1"
+    $SOCAT /dev/null TCP6-LISTEN:$PORT 2>"$td/tcp6.stderr" &
+    pid=$!
+    usleep $MICROS
+    kill "$pid" 2>/dev/null
+    test ! -s "$td/tcp6.stderr"
+}
+
+# check if UDP on IPv4 is available on host
+runsudp4 () {
+    return 0;
+#    PORT="$1"
+    $SOCAT /dev/null UDP4-LISTEN:$PORT 2>"$td/udp4.stderr" &
+    pid=$!
+    usleep $MICROS
+    kill "$pid" 2>/dev/null
+    test ! -s "$td/udp4.stderr"
+}
+
+# check if UDP on IPv6 is available on host
+runsudp6 () {
+    return 0;
+#    PORT="$1"
+    $SOCAT /dev/null UDP6-LISTEN:$PORT 2>"$td/udp6.stderr" &
+    pid=$!
+    usleep $MICROS
+    kill "$pid" 2>/dev/null
+    test ! -s "$td/udp6.stderr"
+}
+
 # check if SCTP on IPv4 is available on host
 runssctp4 () {
-    PORT="$1"
+    #PORT="$1"
     $SOCAT /dev/null SCTP4-LISTEN:$PORT 2>"$td/sctp4.stderr" &
     pid=$!
-    sleep 1
+    usleep $MICROS
     kill "$pid" 2>/dev/null
     test ! -s "$td/sctp4.stderr"
 }
 
 # check if SCTP on IPv6 is available on host
 runssctp6 () {
-    PORT="$1"
+    #PORT="$1"
     $SOCAT /dev/null SCTP6-LISTEN:$PORT 2>"$td/sctp6.stderr" &
     pid=$!
-    sleep 1
+    usleep $MICROS
     kill "$pid" 2>/dev/null
     test ! -s "$td/sctp6.stderr"
 }
@@ -2479,7 +2539,7 @@ if [ "$UNAME" != Linux ]; then
     $PRINTF "test $F_n $TEST... ${YELLOW}only on Linux$NORMAL\n" $N
     numCANT=$((numCANT+1))
 else
-    testecho "$N" "$TEST" "" "udp:127.100.0.1:$PORT,sp=$PORT,bind=127.100.0.1" "$opts"
+    testecho "$N" "$TEST" "" "udp:$SECONDADDR:$PORT,sp=$PORT,bind=$SECONDADDR" "$opts"
 fi
 esac
     fi # NUMCOND
@@ -3952,9 +4012,9 @@ if ! eval $NUMCOND; then :;
 elif [ "$FEAT" != ',' ] && ! testaddrs "$FEAT" >/dev/null; then
     $PRINTF "test $F_n $TEST... ${YELLOW}$FEAT not available${NORMAL}\n" $N
     numCANT=$((numCANT+1))
-#elif ! runs$RUNS; then
-#    $PRINTF "test $F_n $TEST... ${YELLOW}$RUNS not available${NORMAL}\n" $N
-#    numCANT=$((numCANT+1))
+elif ! runs$RUNS; then
+    $PRINTF "test $F_n $TEST... ${YELLOW}$RUNS not available${NORMAL}\n" $N
+    numCANT=$((numCANT+1))
 else
 tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
@@ -5332,13 +5392,8 @@ NAME=TCP4RANGEMASKHAIRY
 case "$TESTS" in
 *%functions%*|*%security%*|*%tcp%*|*%tcp4%*|*%ip4%*|*%range%*|*%$NAME%*)
 TEST="$NAME: security of TCP4-L with RANGE option"
-if ! eval $NUMCOND; then :;
-elif [ "$UNAME" != Linux ]; then
-    # we need access to more loopback addresses
-    $PRINTF "test $F_n $TEST... ${YELLOW}only on Linux${NORMAL}\n" $N
-    numCANT=$((numCANT+1))
-else
-testserversec "$N" "$TEST" "$opts -s" "tcp4-l:$PORT,reuseaddr,fork,retry=1" "" "range=127.0.0.0:255.255.0.0" "tcp4:127.1.0.0:$PORT" 4 tcp $PORT 0
+if ! eval $NUMCOND; then :; else
+testserversec "$N" "$TEST" "$opts -s" "tcp4-l:$PORT,reuseaddr,fork,retry=1" "" "range=127.0.0.0:255.255.0.0" "tcp4:$SECONDADDR:$PORT,bind=$SECONDADDR" 4 tcp $PORT 0
 fi ;; # Linux, NUMCOND
 esac
 PORT=$((PORT+1))
@@ -5399,7 +5454,7 @@ ha="$td/hosts.allow"
 hd="$td/hosts.deny"
 $ECHO "socat: $LOCALHOST" >"$ha"
 $ECHO "ALL: ALL" >"$hd"
-testserversec "$N" "$TEST" "$opts -s" "tcp4-l:$PORT,reuseaddr,fork,retry=1" "" "hosts-allow=$ha,hosts-deny=$hd" "tcp4:$SECONDADDR:$PORT" 4 tcp $PORT 0
+testserversec "$N" "$TEST" "$opts -s" "tcp4-l:$PORT,reuseaddr,fork,retry=1" "" "hosts-allow=$ha,hosts-deny=$hd" "tcp4:$SECONDADDR:$PORT,bind=$SECONDADDR" 4 tcp $PORT 0
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -6210,7 +6265,8 @@ tdiff="$td/test$N.diff"
 da1="test$N $(date) $RANDOM"
 da2="test$N $(date) $RANDOM"
 #establish a listening and forking udp socket in background
-SRV="$SOCAT $opts -lpserver UDP4-LISTEN:$PORT,bind=$LOCALHOST,fork PIPE"
+#processes hang forever without -T
+SRV="$SOCAT -T 5 $opts -lpserver UDP4-LISTEN:$PORT,bind=$LOCALHOST,fork PIPE"
 #make a first and a second connection
 CLI="$SOCAT $opts -lpclient - UDP4-CONNECT:$LOCALHOST:$PORT"
 $PRINTF "test $F_n $TEST... " $N
@@ -6257,59 +6313,91 @@ N=$((N+1))
 
 
 NAME=UNIXLISTENFORK
+# is a listen address capable of forking to child processes and have both
+# active?
+while read PROTOV MAJADDR MINADDR; do
+if [ -z "$PROTOV" ] || [[ "$PROTOV" == \#* ]]; then continue; fi
+protov="$(echo "$PROTOV" |tr A-Z a-z)"
+proto="${protov%%[0-9]}"
+NAME=${PROTOV}LISTENFORK
 case "$TESTS" in
-*%functions%*|*%unix%*|*%listen%*|*%fork%*|*%$NAME%*)
-TEST="$NAME: UNIX socket keeps listening after child died"
-if ! eval $NUMCOND; then :; else
-ts="$td/test$N.socket"
+*%functions%*|*%$protov%*|*%$proto%*|*%listen%*|*%fork%*|*%$NAME%*)
+TEST="$NAME: $PROTOV listen handles 2 concurrent connections"
+# have a listening address with fork option. connect with client1, send a piece
+# of data, wait 1s, connect with client2, send another piece of data, wait 1s,
+# and send another piece of data with client1. The server processes append all
+# data to the same file. Check all data are written to the file in correct
+# order.
+if ! eval $NUMCOND; then :;
+#elif ! feat=$(testaddrs $PROTOV); then
+#    $PRINTF "test $F_n $TEST... ${YELLOW}$(echo "$PROTOV" |tr a-z A-Z) not available${NORMAL}\n" $N
+#    numCANT=$((numCANT+1))
+elif ! runs$protov; then
+     $PRINTF "test $F_n $TEST... ${YELLOW}$PROTOV not available${NORMAL}\n" $N
+    numCANT=$((numCANT+1))
+else
+ts="$td/test$N.sock"
+tref="$td/test$N.ref"
 tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
-da1="test$N $(date) $RANDOM"
-da2="test$N $(date) $RANDOM"
-#establish a listening and forking unix socket in background
-SRV="$SOCAT $opts -lpserver UNIX-LISTEN:\"$ts\",fork PIPE"
-#make a first and a second connection
-CLI="$SOCAT $opts -lpclient - UNIX-CONNECT:\"$ts\""
+da1a="test$N $(date) 1a $RANDOM"
+da1b="test$N $(date) 1b $RANDOM"
+da2="test$N $(date) 2 $RANDOM"
+case "$MAJADDR" in
+    "FILE")
+	tla="$ts"
+	tca="$ts"
+	waitproto="file"
+	waitfor="$ts" ;;
+esac   
+case "$MINADDR" in
+    "PORT")
+	tla="$PORT,bind=$MAJADDR"
+	tca="$MAJADDR:$PORT"
+	waitproto="${protov}port"
+	waitfor="$PORT" ;;
+esac   
+#set -xv
+echo -e "$da1a\n$da2\n$da1b" >"$tref"
+# establish a listening and forking listen socket in background
+# UDP processes hang forever without -T
+CMD0="$SOCAT -T 5 $opts -lpserver $PROTOV-LISTEN:$tla,fork PIPE"
+# make a first and a second connection
+CMD1="$SOCAT $opts -lpclient - $PROTOV-CONNECT:$tca"
 $PRINTF "test $F_n $TEST... " $N
-eval "$SRV 2>${te}s &"
-pids=$!
-waitfile "$ts"
-echo "$da1" |eval "$CLI" >"${tf}1" 2>"${te}1"
-if [ $? -ne 0 ]; then
-    kill "$pids" 2>/dev/null
-    $PRINTF "$NO_RESULT (first conn failed):\n"
-    echo "$SRV &"
-    echo "$CLI"
-    cat "${te}s" "${te}1"
-    numCANT=$((numCANT+1))
-elif ! echo "$da1" |diff - "${tf}1" >"$tdiff"; then
-    kill "$pids" 2>/dev/null
-    $PRINTF "$NO_RESULT (first conn failed); diff:\n"
-    cat "$tdiff"
-    numCANT=$((numCANT+1))
-else
-echo "$da2" |eval "$CLI" >"${tf}2" 2>"${te}2"
-rc="$?"; kill "$pids" 2>/dev/null
+eval "$CMD0 2>${te}0 &"
+pid0=$!
+wait$waitproto "$waitfor" 1 2
+(echo "$da1a"; sleep 2; echo "$da1b") |eval "$CMD1" >>"${tf}" 2>"${te}1" &
+sleep 1
+# trailing sleep req for sctp because no half close
+(echo "$da2"; sleep 1) |eval "$CMD1" >>"${tf}" 2>"${te}2" &
+sleep 2
+kill $pid0 2>/dev/null
 wait
-if [ $rc -ne 0 ]; then
-    $PRINTF "$FAILED:\n"
-    echo "$SRV &"
-    echo "$CLI"
-    cat "${te}s" "${te}2"
-    numFAIL=$((numFAIL+1))
-elif ! echo "$da2" |diff - "${tf}2" >"$tdiff"; then
-    $PRINTF "$FAILED: diff\n"
+if ! diff "$tref" "$tf" >"$tdiff"; then
+    $PRINTF "$FAILED\n"
+    cat "${te}0" "${te}1" "${te}2"
     cat "$tdiff"
     numFAIL=$((numFAIL+1))
 else
     $PRINTF "$OK\n"
     numOK=$((numOK+1))
-fi # !( $? -ne 0)
 fi # !(rc -ne 0)
 fi ;; # NUMCOND, feats
 esac
+PORT=$((PORT+1))
 N=$((N+1))
+done <<<"
+TCP4  $LOCALHOST PORT
+TCP6  $LOCALHOST6 PORT
+UDP4  $LOCALHOST PORT
+UDP6  $LOCALHOST6 PORT
+SCTP4 $LOCALHOST PORT
+SCTP6 $LOCALHOST6 PORT
+UNIX FILE ,
+"
 
 
 NAME=UNIXTOSTREAM
