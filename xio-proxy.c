@@ -415,7 +415,7 @@ int _xioopen_proxy_connect(struct single *xfd,
 
    Info("sending \"\\r\\n\"");
    if (writefull(xfd->wfd, "\r\n", 2) < 0) {
-      Msg2(level, "write(%d, %p, "F_Zu"): %s",
+      Msg2(level, "write(%d, \"\\r\\n\", 2): %s",
 	   xfd->wfd, strerror(errno));
       if (Close(xfd->wfd) < 0) {
 	 Info2("close(%d): %s", xfd->wfd, strerror(errno));
