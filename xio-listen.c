@@ -1,5 +1,5 @@
 /* source: xio-listen.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for listen socket options */
@@ -270,6 +270,7 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
 	 if (Shutdown(ps, 2) < 0) {
 	    Info2("shutdown(%d, 2): %s", ps, strerror(errno));
 	 }
+	 Close(ps);
 	 continue;
       }
 
