@@ -1,10 +1,13 @@
 /* source: sysincludes.h */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 #ifndef __sysincludes_h_included
 #define __sysincludes_h_included 1
 
+#if HAVE_INTTYPES_H
+#include <inttypes.h>  /* uint16_t */
+#endif
 #if HAVE_LIMITS_H
 #include <limits.h>	/* USHRT_MAX */
 #endif
@@ -147,7 +150,9 @@
 #if HAVE_UTIL_H
 #include <util.h>		/* NetBSD, OpenBSD openpty() */
 #endif
-#if HAVE_LIBUTIL_H
+#if HAVE_BSD_LIBUTIL_H
+#include <bsd/libutil.h>	/* FreeBSD openpty() */
+#elif HAVE_LIBUTIL_H
 #include <libutil.h>		/* FreeBSD openpty() */
 #endif
 #if HAVE_SYS_STROPTS_H

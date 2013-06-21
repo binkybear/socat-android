@@ -1,5 +1,5 @@
 /* source: xio-udp.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for handling UDP addresses */
@@ -489,7 +489,6 @@ int xioopen_udp_recvfrom(int argc, const char *argv[], struct opt *opts,
 		     int pf, int socktype, int ipproto) {
    union sockaddr_union us;
    socklen_t uslen = sizeof(us);
-   bool needbind = false;
    int result;
 
    if (argc != 2) {
@@ -536,7 +535,6 @@ int xioopen_udp_recvfrom(int argc, const char *argv[], struct opt *opts,
 	 case PF_INET6: us.ip6.sin6_addr = la.ip6.sin6_addr; break;
 #endif
 	 }
-	 needbind = true;
       }
    }
 

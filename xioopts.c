@@ -1,5 +1,5 @@
 /* source: xioopts.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for address options handling */
@@ -2820,7 +2820,7 @@ int retropt_bind(struct opt *opts,
    const char portsep[] = ":";
    const char *ends[] = { portsep, NULL };
    const char *nests[] = { "[", "]", NULL };
-   bool addrallowed, portallowed;
+   bool portallowed;
    char *bindname, *bindp;
    char hostname[512], *hostp = hostname, *portp = NULL;
    size_t hostlen = sizeof(hostname)-1;
@@ -2856,7 +2856,6 @@ int retropt_bind(struct opt *opts,
 #if WITH_IP6
    case AF_INET6:
 #endif /*WITH_IP6 */
-      addrallowed = true;
       portallowed = (feats>=2);
       nestlex((const char **)&bindp, &hostp, &hostlen, ends, NULL, NULL, nests,
 	      true, false, false, false);

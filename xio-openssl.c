@@ -1,5 +1,5 @@
 /* source: xio-openssl.c */
-/* Copyright Gerhard Rieger 2002-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the implementation of the openssl addresses */
@@ -822,7 +822,7 @@ int
 			    SSL_CTX **ctx)
 {
    bool opt_fips = false;
-   SSL_METHOD *method;
+   const SSL_METHOD *method;
    char *me_str = NULL;	/* method string */
    char *ci_str = NULL;	/* cipher string */
    char *opt_key  = NULL;	/* file name of client private key */
@@ -878,8 +878,14 @@ int
    if (!server) {
       if (me_str != 0) {
 	 if (!strcasecmp(me_str, "SSLv2") || !strcasecmp(me_str, "SSL2")) {
+#if HAVE_SSLv2_client_method
 	    method = sycSSLv2_client_method();
-	 } else if (!strcasecmp(me_str, "SSLv3") || !strcasecmp(me_str, "SSL3")) {
+#else
+	    Error1("OpenSSL method \"%s\" not provided by library", me_str);
+	    method = sycSSLv23_server_method();
+#endif
+	 } else
+	 if (!strcasecmp(me_str, "SSLv3") || !strcasecmp(me_str, "SSL3")) {
 	    method = sycSSLv3_client_method();
 	 } else if (!strcasecmp(me_str, "SSLv23") || !strcasecmp(me_str, "SSL23") ||
 		    !strcasecmp(me_str, "SSL")) {
@@ -889,16 +895,22 @@ int
 	    method = sycTLSv1_client_method();
 	 } else {
 	    Error1("openssl-method=\"%s\": unknown method", me_str);
-	    method = sycSSLv23_client_method()/*!*/;
+	    method = sycSSLv23_client_method();
 	 }
       } else {
-	 method = sycSSLv23_client_method()/*!*/;
+	 method = sycSSLv23_client_method();
       }
    } else /* server */ {
       if (me_str != 0) {
 	 if (!strcasecmp(me_str, "SSLv2") || !strcasecmp(me_str, "SSL2")) {
+#if HAVE_SSLv2_server_method
 	    method = sycSSLv2_server_method();
-	 } else if (!strcasecmp(me_str, "SSLv3") || !strcasecmp(me_str, "SSL3")) {
+#else
+	    Error1("OpenSSL method \"%s\" not provided by library", me_str);
+	    method = sycSSLv23_server_method();
+#endif
+	 } else
+	 if (!strcasecmp(me_str, "SSLv3") || !strcasecmp(me_str, "SSL3")) {
 	    method = sycSSLv3_server_method();
 	 } else if (!strcasecmp(me_str, "SSLv23") || !strcasecmp(me_str, "SSL23") ||
 		    !strcasecmp(me_str, "SSL")) {
@@ -908,10 +920,10 @@ int
 	    method = sycTLSv1_server_method();
 	 } else {
 	    Error1("openssl-method=\"%s\": unknown method", me_str);
-	    method = sycSSLv23_server_method()/*!*/;
+	    method = sycSSLv23_server_method();
 	 }
       } else {
-	 method = sycSSLv23_server_method()/*!*/;
+	 method = sycSSLv23_server_method();
       }
    }
 

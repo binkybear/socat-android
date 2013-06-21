@@ -1,5 +1,5 @@
 /* source: xio-socket.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for socket related functions, and the
@@ -778,7 +778,6 @@ int _xioopen_connect(struct single *xfd, struct sockaddr *us, size_t uslen,
       union sockaddr_union sin, *sinp;
       unsigned short *port, i, N;
       div_t dv;
-      bool problem;
 
       /* prepare sockaddr for bind probing */
       if (us) {
@@ -826,7 +825,6 @@ int _xioopen_connect(struct single *xfd, struct sockaddr *us, size_t uslen,
       }
       dv = div(random(), IPPORT_RESERVED-XIO_IPPORT_LOWER);
       i = N = XIO_IPPORT_LOWER + dv.rem;
-      problem = false;
       do {	/* loop over lowport bind() attempts */
 	 *port = htons(i);
 	 if (Bind(xfd->rfd, (struct sockaddr *)sinp, sizeof(*sinp)) < 0) {
@@ -1234,7 +1232,6 @@ int _xioopen_dgram_recvfrom(struct single *xfd, int xioflags,
    int rw = (xioflags&XIO_ACCMODE);
    int s;
    char *rangename;
-   socklen_t salen;
    bool dofork = false;
    pid_t pid;	/* mostly int; only used with fork */
    char infobuff[256];
@@ -1388,7 +1385,6 @@ int _xioopen_dgram_recvfrom(struct single *xfd, int xioflags,
       struct msghdr msgh = {0};
 
       socket_init(pf, pa);
-      salen = sizeof(struct sockaddr);
 
       if (drop) {
 	 char *dummy[2];
