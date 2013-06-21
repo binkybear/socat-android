@@ -301,7 +301,7 @@ static int
 				them, &themlen, us, &uslen,
 				&needbind, &lowport, socktype);
       if (result != STAT_OK)  return STAT_NORETRY;
-   } else if (argc = 1) {
+   } else if (argc == 1) {
 
       /* or a "non terminal" address without required parameters */
       if (xfd->wfd < 0) {
