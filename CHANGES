@@ -228,7 +228,10 @@ corrections:
 	mixed directions
 	socat_open sprintf overflow
 
-	fixed bidirectional UDP-LISTEN error
+	Fixed bidirectional UDP-LISTEN error
+
+	Compilation failed under some non-Linux operating systems due to use
+	of old rfd1 component
 
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
