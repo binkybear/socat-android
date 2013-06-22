@@ -629,7 +629,7 @@ static int
       if (portname) {
        /* tcp listen; this can fork() for us; it only returns on error or on
 	  successful establishment of tcp connection */
-	 result = _xioopen_listen(xfd, xioflags,
+	 result = _xioopen_listen(xfd, (xioflags&~XIO_ACCMODE)|XIO_RDWR,
 				  (struct sockaddr *)us, uslen,
 				  opts, pf, socktype, IPPROTO_TCP,
 #if WITH_RETRY

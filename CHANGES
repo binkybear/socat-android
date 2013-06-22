@@ -233,6 +233,9 @@ corrections:
 	Compilation failed under some non-Linux operating systems due to use
 	of old rfd1 component
 
+	OPENSSL-LISTEN failed with "Bad file descriptor" when used in
+	write-only context
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
