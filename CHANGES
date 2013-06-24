@@ -236,6 +236,9 @@ corrections:
 	OPENSSL-LISTEN failed with "Bad file descriptor" when used in
 	write-only context
 
+	UDP-LISTEN failed with "...is not available". Thanks to Fred for
+	reporting this problem
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang

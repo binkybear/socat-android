@@ -115,8 +115,8 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
    char lisname[256];
    union sockaddr_union _peername;
    union sockaddr_union _sockname;
-   union sockaddr_union *pa = &_peername;	/* peer address */
-   union sockaddr_union *la = &_sockname;	/* local address */
+   union sockaddr_union *pa;	/* peer address */
+   union sockaddr_union *la;	/* local address */
    socklen_t pas = sizeof(_peername);	/* peer address size */
    socklen_t las = sizeof(_sockname);	/* local address size */
    int result;
@@ -229,8 +229,8 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
       char sockname[256];
       int ps;		/* peer socket */
 
-      pa = &_peername;
-      la = &_sockname;
+      pa = &_peername;	/* peer address */
+      la = &_sockname;	/* local address */
       salen = sizeof(struct sockaddr);
       do {
 	 /*? int level = E_ERROR;*/
