@@ -1,4 +1,11 @@
 
+####################### V 2.0.0-b7:
+
+security:
+	CVE-2014-0019: socats PROXY-CONNECT address was vulnerable to a buffer
+	overflow with data from command line (see socat-secadv5.txt)
+	Credits to Florian Weimer of the Red Hat Product Security Team
+
 ####################### V 2.0.0-b6:
 
 security:
