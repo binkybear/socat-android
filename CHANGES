@@ -1,34 +1,7 @@
 
 corrections:
-	user-late and group-late, when applied to a pty, affected the system
-	device /dev/ptmx instead of the pty (thanks to Matthew Cloke for
-	pointing me to this bug)
-
-	socats openssl addresses failed with "nonblocking operation did not
-	complete" when the peer performed a renegotiation. Thanks to Benjamin
-	Delpy for reporting this bug.
-
-	corrected the "fixed possible SIGSEGV" fix because SIGSEGV still might
-	occur under those conditions. Thanks to Toni Mattila for first
-	reporting this problem.
-
-	ftruncate64 cut its argument to 32 bits on systems with 32 bit long type
-
-	with unidirectional EXEC and SYSTEM a close() operation was performed
-	on a random number which could result in hanging e.a.
-
-	fixed a compile problem caused by size_t/socklen_t mismatch on 64bit
-	systems
-
-	Debian bug 531078: socat execs children with SIGCHLD ignored; corrected
-	to default. Thanks to Martin Dorey for reporting this bug.
-
-	added struct sockaddr_ll to union sockaddr_union to avoid "strict
-	aliasing" warnings (problem reported by Paul Wouters)
-
-	info message during socks connect showed bad port number on little
-	endian systems due to wrong byte order (thanks to Peter M. Galbavy for
-	bug report and patch)
+	fixed bug in xio-openssl.c that prevented error handling of bad number
+	of arguments, thanks to Paulik Tamas for reporting
 
 	when UNIX-LISTEN was applied to an existing file it failed as expected
 	but removed the file. Thanks to Bjoern Bosselmann for reporting this
@@ -91,25 +64,37 @@ corrections:
 
 	improved dev_t print format definition
 
-	fixed bug in xio-openssl.c that prevented error handling of bad number
-	of arguments, thanks to Paulik Tamas for reporting
+	user-late and group-late, when applied to a pty, affected the system
+	device /dev/ptmx instead of the pty (thanks to Matthew Cloke for
+	pointing me to this bug)
+
+	socats openssl addresses failed with "nonblocking operation did not
+	complete" when the peer performed a renegotiation. Thanks to Benjamin
+	Delpy for reporting this bug.
+
+	info message during socks connect showed bad port number on little
+	endian systems due to wrong byte order (thanks to Peter M. Galbavy for
+	bug report and patch)
+
+	Debian bug 531078: socat execs children with SIGCHLD ignored; corrected
+	to default. Thanks to Martin Dorey for reporting this bug.
+
+	corrected the "fixed possible SIGSEGV" fix because SIGSEGV still might
+	occur under those conditions. Thanks to Toni Mattila for first
+	reporting this problem.
+
+	ftruncate64 cut its argument to 32 bits on systems with 32 bit long type
+
+	with unidirectional EXEC and SYSTEM a close() operation was performed
+	on a random number which could result in hanging e.a.
+
+	fixed a compile problem caused by size_t/socklen_t mismatch on 64bit
+	systems
 
 	docu mentions option so-bindtodev but correct name is so-bindtodevice. 
 	Thanks to Jim Zimmerman for reporting.
 
-	minor corrections in doc (2x)
-
 porting:
-	building socat on systems that predefined the CFLAGS environment to
-	contain -Wall failed (esp.RedHat). Thanks to Paul Wouters for reporting
-	this problem and to Simon Matter for providing the patch
-
-	support for Solaris 8 and Sun Studio support (thanks to Sebastian
-	Kayser for providing the patches)
-
-	on some 64bit systems a compiler warning "cast from pointer to integer
-	of different size" was issued on some option definitions
-
 	Cedril Priscal ported socat to Android (using Googles cross compiler).
 	The port includes the socat_buildscript_for_android.sh script
 
@@ -143,6 +128,19 @@ porting:
 	Ubuntu Oneiric: OpenSSL no longer provides SSLv2 functions; libutil.sh
 	is now bsd/libutil.h; compiler warns on vars that is only written to
 
+	building socat on systems that predefined the CFLAGS environment to
+	contain -Wall failed (esp.RedHat). Thanks to Paul Wouters for reporting
+	this problem and to Simon Matter for providing the patch
+
+	support for Solaris 8 and Sun Studio support (thanks to Sebastian
+	Kayser for providing the patches)
+
+	on some 64bit systems a compiler warning "cast from pointer to integer
+	of different size" was issued on some option definitions
+
+	added struct sockaddr_ll to union sockaddr_union to avoid "strict
+	aliasing" warnings (problem reported by Paul Wouters)
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.
@@ -155,6 +153,8 @@ new features:
 
 docu
 	minor corrections in docu (thanks to Paggas)
+
+	minor corrections in doc (2x)
 
 	client process -> child process
 
