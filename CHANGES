@@ -95,6 +95,8 @@ corrections:
 	Thanks to Jim Zimmerman for reporting.
 
 porting:
+	Performed changes for Fedora release 19
+
 	Cedril Priscal ported socat to Android (using Googles cross compiler).
 	The port includes the socat_buildscript_for_android.sh script
 
