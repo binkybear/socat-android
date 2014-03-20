@@ -99,6 +99,10 @@ porting:
 
 	Adapted, improved test.sh script
 
+	libwrap always logs to syslog
+
+	added actual text version of GPLv2
+
 	Cedril Priscal ported socat to Android (using Googles cross compiler).
 	The port includes the socat_buildscript_for_android.sh script
 
