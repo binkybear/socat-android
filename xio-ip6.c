@@ -230,7 +230,10 @@ int xiolog_ancillary_ip6(struct cmsghdr *cmsg, int *num,
    case IPV6_HOPLIMIT:
       strncpy(typbuff, "IPV6_HOPLIMIT", typlen);
       strncpy(nambuff, "hoplimit", namlen);
-      snprintf(valbuff, vallen, "%d", *(int *)CMSG_DATA(cmsg));
+      {
+	 int *intp = (int *)CMSG_DATA(cmsg);
+	 snprintf(valbuff, vallen, "%d", *intp);
+      }
       return STAT_OK;
 #endif /* defined(IPV6_HOPLIMIT) */
 #ifdef IPV6_RTHDR
