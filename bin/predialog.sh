@@ -1,6 +1,6 @@
 #! /bin/bash
 # source: predialog.sh
-# Copyright Gerhard Rieger 2009
+# Copyright Gerhard Rieger
 # Published under the GNU General Public License V.2, see file COPYING
 
 # This is an example script that shows how to write a script for use with socat
@@ -14,6 +14,14 @@
 # the "left side" FDs
 RINFD=3
 ROUTFD=4
+
+if [ -z "$SOCAT" ]; then
+    if type socat2 >/dev/null 2>&1; then
+	SOCAT=socat2
+    else
+	SOCAT="./socat"
+    fi
+fi
 
 verbose=
 # parse options
@@ -50,4 +58,4 @@ wait
 msg "starting data transfer"
 # now just pass traffic in both directions
 #SOCAT_OPTS="-lu -d -d -d -d"
-exec socat $SOCAT_OPTS - "fd:$ROUTFD:$RINFD"
+exec $SOCAT $SOCAT_OPTS - "fd:$ROUTFD:$RINFD"

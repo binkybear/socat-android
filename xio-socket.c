@@ -115,7 +115,7 @@ const struct optdesc opt_so_debug    = { "so-debug",    "debug", OPT_SO_DEBUG,  
 const struct optdesc opt_so_acceptconn={ "so-acceptconn","acceptconn",OPT_SO_ACCEPTCONN,GROUP_SOCKET,PH_PASTSOCKET,TYPE_INT,  OFUNC_SOCKOPT, SOL_SOCKET, SO_ACCEPTCONN};
 #endif /* SO_ACCEPTCONN */
 const struct optdesc opt_so_broadcast= { "so-broadcast", "broadcast", OPT_SO_BROADCAST,GROUP_SOCKET, PH_PASTSOCKET, TYPE_INT,  OFUNC_SOCKOPT, SOL_SOCKET, SO_BROADCAST};
-const struct optdesc opt_so_reuseaddr= { "so-reuseaddr", "reuseaddr", OPT_SO_REUSEADDR,GROUP_SOCKET, PH_PASTSOCKET, TYPE_INT,  OFUNC_SOCKOPT, SOL_SOCKET, SO_REUSEADDR};
+const struct optdesc opt_so_reuseaddr= { "so-reuseaddr", "reuseaddr", OPT_SO_REUSEADDR,GROUP_SOCKET, PH_PREBIND, TYPE_INT,  OFUNC_SOCKOPT, SOL_SOCKET, SO_REUSEADDR};
 const struct optdesc opt_so_keepalive= { "so-keepalive", "keepalive", OPT_SO_KEEPALIVE,GROUP_SOCKET, PH_FD, TYPE_INT,  OFUNC_SOCKOPT, SOL_SOCKET, SO_KEEPALIVE};
 #if HAVE_STRUCT_LINGER
 const struct optdesc opt_so_linger   = { "so-linger",    "linger",    OPT_SO_LINGER,   GROUP_SOCKET, PH_PASTSOCKET, TYPE_LINGER,OFUNC_SOCKOPT,SOL_SOCKET, SO_LINGER };

@@ -148,8 +148,6 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
       return STAT_RETRYLATER;
    }
 
-   applyopts(xfd->rfd, opts, PH_PASTSOCKET);
-
    applyopts_cloexec(xfd->rfd, opts);
 
    applyopts(xfd->rfd, opts, PH_PREBIND);
@@ -184,6 +182,7 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
    }
 #endif /* WITH_UNIX */
 
+   applyopts(xfd->rfd, opts, PH_PRELISTEN);
    retropt_int(opts, OPT_BACKLOG, &backlog);
    if (Listen(xfd->rfd, backlog) < 0) {
       Error3("listen(%d, %d): %s", xfd->rfd, backlog, strerror(errno));
@@ -284,9 +283,6 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
 	       sockaddr_info((struct sockaddr *)pa, pas,
 			     infobuff, sizeof(infobuff)));
 
-      applyopts(xfd->rfd, opts, PH_FD);
-      applyopts(xfd->rfd, opts, PH_CONNECTED);
-
       if (dofork) {
 	 pid_t pid;	/* mostly int; only used with fork */
 	 sigset_t mask_sigchld;
@@ -352,6 +348,10 @@ int _xioopen_listen(struct single *xfd, int xioflags, struct sockaddr *us, sockl
 	 break;
       }
    }
+
+   applyopts(xfd->rfd, opts, PH_FD);
+   applyopts(xfd->rfd, opts, PH_PASTSOCKET);
+   applyopts(xfd->rfd, opts, PH_CONNECTED);
    if ((result = _xio_openlate(xfd, opts)) < 0)
       return result;
 
