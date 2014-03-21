@@ -1,5 +1,8 @@
 
 corrections:
+	make failed after configure with non gcc compiler due to missing
+	include. Thanks to Horacio Mijail for reporting this problem
+
 	fixed bug in xio-openssl.c that prevented error handling of bad number
 	of arguments, thanks to Paulik Tamas for reporting
 
