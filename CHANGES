@@ -148,6 +148,10 @@ porting:
 
 	Adapted, improved test.sh script
 
+	Red Hat issue 1021429: getgroupent fails with large number of groups;
+	use getgrouplist() when available instead of sequence of calls to
+	getgrent()
+
 	libwrap always logs to syslog
 
 	added actual text version of GPLv2
