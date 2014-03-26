@@ -422,7 +422,7 @@ int _xioopen_socks4_connect(struct single *xfd,
 	 char msgbuff[3*SIZEOF_STRUCT_SOCKS4];
 	 * xiohexdump((const unsigned char *)replyhead+bytes, result, msgbuff)
 	    = '\0';
-	 Debug2("received socks4 reply data (offset %u): %s", bytes, msgbuff);
+	 Debug2("received socks4 reply data (offset "F_Zd"): %s", bytes, msgbuff);
       }
 #endif /* WITH_MSGLEVEL <= E_DEBUG */
       bytes += result;
@@ -430,7 +430,7 @@ int _xioopen_socks4_connect(struct single *xfd,
 	 Debug1("received all "F_Zd" bytes", bytes);
 	 break;
       }
-      Debug2("received "F_Zd" bytes, waiting for "F_Zu" more bytes",
+      Debug2("received %d bytes, waiting for "F_Zu" more bytes",
 	     result, SIZEOF_STRUCT_SOCKS4-bytes);
    }
    if (result <= 0) {	/* we had a problem while reading socks answer */

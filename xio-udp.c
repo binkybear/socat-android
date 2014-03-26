@@ -214,7 +214,7 @@ int xioopen_ipdgram_listen(int argc, const char *argv[], struct opt *opts,
       applyopts(fd->stream.rfd, opts, PH_PREBIND);
       applyopts(fd->stream.rfd, opts, PH_BIND);
       if (Bind(fd->stream.rfd, &us.soa, uslen) < 0) {
-	 Error4("bind(%d, {%s}, "F_Zd"): %s", fd->stream.rfd,
+	 Error4("bind(%d, {%s}, "F_socklen"): %s", fd->stream.rfd,
 		sockaddr_info(&us.soa, uslen, infobuff, sizeof(infobuff)),
 		uslen, strerror(errno));
 	 return STAT_RETRYLATER;
@@ -240,7 +240,7 @@ int xioopen_ipdgram_listen(int argc, const char *argv[], struct opt *opts,
 			     &them->soa, &themlen);
       } while (result < 0 && errno == EINTR);
       if (result < 0) {
-	 Error5("recvfrom(%d, %p, 1, MSG_PEEK, {%s}, {"F_Zu"}): %s",
+	 Error5("recvfrom(%d, %p, 1, MSG_PEEK, {%s}, {"F_socklen"}): %s",
 		fd->stream.rfd, buff1,
 		sockaddr_info(&them->soa, themlen, infobuff, sizeof(infobuff)),
 		themlen, strerror(errno));
@@ -283,7 +283,7 @@ int xioopen_ipdgram_listen(int argc, const char *argv[], struct opt *opts,
 
    applyopts(fd->stream.rfd, opts, PH_CONNECT);
    if ((result = Connect(fd->stream.rfd, &them->soa, themlen)) < 0) {
-      Error4("connect(%d, {%s}, "F_Zd"): %s",
+      Error4("connect(%d, {%s}, "F_socklen"): %s",
 	     fd->stream.rfd,
 	     sockaddr_info(&them->soa, themlen, infobuff, sizeof(infobuff)),
 	     themlen, strerror(errno));

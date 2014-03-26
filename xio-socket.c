@@ -829,7 +829,7 @@ int _xioopen_connect(struct single *xfd, struct sockaddr *us, size_t uslen,
 	 *port = htons(i);
 	 if (Bind(xfd->rfd, (struct sockaddr *)sinp, sizeof(*sinp)) < 0) {
 	    Msg4(errno==EADDRINUSE?E_INFO:level,
-		 "bind(%d, {%s}, "F_Zd"): %s", xfd->rfd,
+		 "bind(%d, {%s}, "F_socklen"): %s", xfd->rfd,
 		 sockaddr_info(&sinp->soa, sizeof(*sinp), infobuff, sizeof(infobuff)),
 		 sizeof(*sinp), strerror(errno));
 	    if (errno != EADDRINUSE) {
@@ -852,7 +852,7 @@ int _xioopen_connect(struct single *xfd, struct sockaddr *us, size_t uslen,
 
    if (us) {
       if (Bind(xfd->rfd, us, uslen) < 0) {
-	 Msg4(level, "bind(%d, {%s}, "F_Zd"): %s",
+	 Msg4(level, "bind(%d, {%s}, "F_socklen"): %s",
 	      xfd->rfd, sockaddr_info(us, uslen, infobuff, sizeof(infobuff)),
 	      uslen, strerror(errno));
 	 Close(xfd->rfd);
@@ -1100,7 +1100,7 @@ int _xioopen_dgram_sendto(/* them is already in xfd->peersa */
 
    if (us) {
       if (Bind(xfd->rfd, (struct sockaddr *)us, uslen) < 0) {
-	 Msg4(level, "bind(%d, {%s}, "F_Zd"): %s",
+	 Msg4(level, "bind(%d, {%s}, "F_socklen"): %s",
 	      xfd->rfd, sockaddr_info((struct sockaddr *)us, uslen, infobuff, sizeof(infobuff)),
 	      uslen, strerror(errno));
 	 Close(xfd->rfd);
@@ -1680,7 +1680,7 @@ int xiodopacketinfo(struct msghdr *msgh, bool withlog, bool withenv) {
 	 xiodump(CMSG_DATA(cmsg),
 		 cmsg->cmsg_len-((char *)CMSG_DATA(cmsg)-(char *)cmsg),
 		 valbuff, sizeof(valbuff)-1, 0);
-	 Debug4("ancillary message: len="F_socklen", level=%d, type=%d, data=%s",
+	 Debug4("ancillary message: len="F_cmsg_len", level=%d, type=%d, data=%s",
 		cmsg->cmsg_len, cmsg->cmsg_level, cmsg->cmsg_type,
 		valbuff);
       }

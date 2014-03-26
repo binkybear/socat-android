@@ -938,12 +938,12 @@ int Socket(int domain, int type, int protocol) {
 #endif /* _WITH_SOCKET */
 
 #if _WITH_SOCKET
-int Bind(int sockfd, struct sockaddr *my_addr, int addrlen) {
+int Bind(int sockfd, struct sockaddr *my_addr, socklen_t addrlen) {
    int result, _errno;
    char infobuff[256];
 
    sockaddr_info(my_addr, addrlen, infobuff, sizeof(infobuff));
-   Debug3("bind(%d, %s, "F_Zd")", sockfd, infobuff, addrlen);
+   Debug3("bind(%d, %s, "F_socklen")", sockfd, infobuff, addrlen);
    result = bind(sockfd, my_addr, addrlen);
    _errno = errno;
    Debug1("bind() -> %d", result);
@@ -953,14 +953,14 @@ int Bind(int sockfd, struct sockaddr *my_addr, int addrlen) {
 #endif /* _WITH_SOCKET */
 
 #if _WITH_SOCKET
-int Connect(int sockfd, const struct sockaddr *serv_addr, int addrlen) {
+int Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
    int result, _errno;
    char infobuff[256];
 
    /*sockaddr_info(serv_addr, infobuff, sizeof(infobuff));
    Debug3("connect(%d, %s, "F_Zd")", sockfd, infobuff, addrlen);*/
 #if 0
-   Debug18("connect(%d,{0x%02x%02x%02x%02x %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x}, "F_Zd")",
+   Debug18("connect(%d,{0x%02x%02x%02x%02x %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x}, "F_socklen")",
 	   sockfd,
 	   ((unsigned char *)serv_addr)[0],  ((unsigned char *)serv_addr)[1],
 	   ((unsigned char *)serv_addr)[2],  ((unsigned char *)serv_addr)[3], 
@@ -1008,7 +1008,7 @@ int Accept(int s, struct sockaddr *addr, socklen_t *addrlen) {
    if (result >= 0) {
       char infobuff[256];
       sockaddr_info(addr, *addrlen, infobuff, sizeof(infobuff));
-      Info5("accept(%d, {%d, %s}, "F_Zd") -> %d", s,
+      Info5("accept(%d, {%d, %s}, "F_socklen") -> %d", s,
 	    addr->sa_family,
 	    sockaddr_info(addr, *addrlen, infobuff, sizeof(infobuff)),
 	    *addrlen, result);
@@ -1057,7 +1057,7 @@ int Getpeername(int s, struct sockaddr *name, socklen_t *namelen) {
 #if _WITH_SOCKET
 int Getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen) {
    int result, _errno;
-   Debug5("getsockopt(%d, %d, %d, %p, {"F_Zd"})",
+   Debug5("getsockopt(%d, %d, %d, %p, {"F_socklen"})",
 	  s, level, optname, optval, *optlen);
    result = getsockopt(s, level, optname, optval, optlen);
    _errno = errno;
@@ -1105,12 +1105,12 @@ int Recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from,
 	     socklen_t *fromlen) {
    int retval, _errno;
    char infobuff[256];
-   Debug6("recvfrom(%d, %p, "F_Zu", %d, %p, "F_Zu")",
+   Debug6("recvfrom(%d, %p, "F_Zu", %d, %p, "F_socklen")",
 	  s, buf, len, flags, from, *fromlen);
    retval = recvfrom(s, buf, len, flags, from, fromlen);
    _errno = errno;
    if (from) {
-      Debug4("recvfrom(,,,, {%d,%s}, "F_Zd") -> %d",
+      Debug4("recvfrom(,,,, {%d,%s}, "F_socklen") -> %d",
 	     from->sa_family,
 	     sockaddr_info(from, *fromlen, infobuff, sizeof(infobuff)),
 	     *fromlen, retval);
@@ -1138,7 +1138,7 @@ int Recvmsg(int s, struct msghdr *msgh, int flags) {
    retval = recvmsg(s, msgh, flags);
    _errno = errno;
 #if defined(HAVE_STRUCT_MSGHDR_MSGCONTROLLEN)
-   Debug5("recvmsg(, {%s,%u,,%u,,%u,}, ) -> %d",
+   Debug5("recvmsg(, {%s,%u,,"F_Zu",,"F_Zu",}, ) -> %d",
 	  msgh->msg_name?sockaddr_info(msgh->msg_name, msgh->msg_namelen, infobuff, sizeof(infobuff)):"NULL",
 	  msgh->msg_namelen, msgh->msg_iovlen, msgh->msg_controllen,
 	  retval);
@@ -1259,7 +1259,7 @@ struct hostent *Gethostbyname(const char *name) {
 int Getaddrinfo(const char *node, const char *service,
 		const struct addrinfo *hints, struct addrinfo **res) {
    int result;
-   Debug15("getaddrinfo(%s%s%s, %s%s%s, {%d,%d,%d,%d,"F_Zu",%p,%p,%p}, %p)",
+   Debug15("getaddrinfo(%s%s%s, %s%s%s, {%d,%d,%d,%d,"F_socklen",%p,%p,%p}, %p)",
 	   node?"\"":"", node?node:"NULL", node?"\"":"",
 	   service?"\"":"", service?service:"NULL", service?"\"":"",
 	   hints->ai_flags, hints->ai_family, hints->ai_socktype,

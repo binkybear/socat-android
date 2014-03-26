@@ -9851,7 +9851,7 @@ test_proto="$(echo "$KEYW" |tr A-Z a-z)"
 NAME=${KEYW}LISTENENV
 case "$TESTS" in
 *%$N%*|*%functions%*|*%ip4%*|*%ipapp%*|*%tcp%*|*%$test_proto%*|*%envvar%*|*%$NAME%*)
-TEST="$NAME: $KEYW-LISTEN fills environment variables with socket addresses"
+TEST="$NAME: $KEYW-LISTEN sets environment variables with socket addresses"
 # have a server accepting a connection and invoking some shell code. The shell
 # code extracts and prints the SOCAT related environment vars.
 # outside code then checks if the environment contains the variables correctly
@@ -9919,6 +9919,8 @@ else
     cat "${te}0"
     echo "$CMD1"
     cat "${te}1"
+    echo -e "SOCAT_SOCKADDR=$TEST_SOCKADDR\nSOCAT_PEERADDR=$TEST_PEERADDR\nSOCAT_SOCKPORT=$TEST_SOCKPORT\nSOCAT_PEERPORT=$TEST_PEERPORT" |
+    diff - "${tf}"
     numFAIL=$((numFAIL+1))
     listFAIL="$listFAIL $N"
 fi
@@ -11638,6 +11640,7 @@ else
     cat "${te}0"
     cat "${te}1"
     numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
 fi
 fi # NUMCOND
  ;;
@@ -11650,7 +11653,7 @@ N=$((N+1))
 # Linux) with "Invalid argument".
 NAME=OPENSSL_CONNECT_BIND
 case "$TESTS" in
-*%functions%*|*%bugs%*|*%socket%*|*%ssl%*|*%$NAME%*)
+*%$N%*|*%functions%*|*%bugs%*|*%socket%*|*%ssl%*|*%$NAME%*)
 TEST="$NAME: test OPENSSL-CONNECT with bind option"
 # have a simple SSL server that just echoes data.
 # connect with socat using OPENSSL-CONNECT with bind, send data and check if the
@@ -11678,6 +11681,7 @@ if [ "$rc1" -ne 0 ]; then
     cat "$te0"
     cat "$te1"
     numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
 elif ! echo "$da" |diff - $tf1 >"$tdiff"; then
     $PRINTF "$FAILED\n"
     echo "$CMD0 &"
@@ -11686,6 +11690,7 @@ elif ! echo "$da" |diff - $tf1 >"$tdiff"; then
     cat "${te}1"
     cat "$tdiff"
     numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
 else
     $PRINTF "$OK\n"
     numOK=$((numOK+1))
@@ -11701,7 +11706,7 @@ N=$((N+1))
 # had a bug that converted a bit mask of 0 internally to 0xffffffff
 NAME=TCP4RANGE_0BITS
 case "$TESTS" in
-*%functions%*|*%tcp%*|*%tcp4%*|*%ip4%*|*%range%*|*%$NAME%*)
+*%$N%*|*%functions%*|*%tcp%*|*%tcp4%*|*%ip4%*|*%range%*|*%$NAME%*)
 TEST="$NAME: correct evaluation of range mask 0"
 if ! eval $NUMCOND; then :;
 elif [ -z "$SECONDADDR" ]; then
@@ -11732,6 +11737,7 @@ elif ! [ -f "$tf" ]; then
     cat "${te}0"
     cat "${te}1"
     numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
 elif ! echo "$da" |diff - "$tf" >"$tdiff"; then
     $PRINTF "${YELLOW}diff failed${NORMAL}\n"
     numCANT=$((numCANT+1))
@@ -12171,7 +12177,7 @@ esac
 N=$((N+1))
 
 
-echo "summary: $((N-1)) tests, $((numOK+numFAILD+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
+echo "summary: $((N-1)) tests, $((numOK+numFAILED+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
 
 if [ "$numFAIL" -gt 0 ]; then
     echo "FAILED: $listFAIL"
