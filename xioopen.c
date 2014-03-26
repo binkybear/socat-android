@@ -1,5 +1,5 @@
 /* source: xioopen.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source file of the extended open function */
@@ -1071,8 +1071,7 @@ static xiosingle_t *
    sfd->argc = 0;
 
    /* for error messages */
-   strncpy(addr0, *addr, sizeof(addr0)-1);
-   addr0[sizeof(addr0)-1] = '\0';
+   addr0[0] = '\0'; strncat(addr0, *addr, sizeof(addr0)-1);
 
    len = sizeof(token); tokp = token;
    if (nestlex(addr, &tokp, &len, ends, hquotes, squotes, nests,

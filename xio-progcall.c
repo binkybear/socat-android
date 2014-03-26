@@ -1,5 +1,5 @@
 /* source: xio-progcall.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains common code dealing with program calls (exec, system) */
@@ -148,7 +148,7 @@ int _xioopen_progcall(int xioflags,	/* XIO_RDONLY etc. */
 #endif
 	     );
    if (usepipes && usepty) {
-      Warn("_xioopen_foxec(): options \"pipes\" and \"pty\" must not be specified together; ignoring \"pipes\"");
+      Warn("_xioopen_progcall(): options \"pipes\" and \"pty\" must not be specified together; ignoring \"pipes\"");
       usepipes = false;
    }
 #endif /* HAVE_PTY */

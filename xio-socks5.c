@@ -1,5 +1,5 @@
 /* source: xio-socks5.c */
-/* Copyright Gerhard Rieger 2004-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains the source for opening addresses of socks5 type */
@@ -296,7 +296,7 @@ int _xioopen_socks5_connect(struct single *xfd,
 		targetname);
       }
       sendrequest->destaddr[0] = strlen(targetname);
-      strncpy(sendrequest->destaddr+1, targetname, sizeof(sendbuff)-5);
+      *(sendrequest->destaddr+1) = '\0'; strncat(sendrequest->destaddr+1, targetname, sizeof(sendbuff)-5);
       break;
    case SOCKS5_ADDRTYPE_IPV6:
       break;
@@ -431,10 +431,10 @@ int xio_socks5_username_password(int level, struct opt *opts,
    pos = sendbuff;
    *pos++ = SOCKS5_USERPASS_VERSION;
    *pos++ = strlen(username);
-   strncpy(pos, username, 255);
+   *pos = '\0'; strncat(pos, username, 255);
    pos += strlen(username);
    *pos++ = strlen(password);
-   strncpy(pos, password, 255);
+   *pos = '\0'; strncat(pos, password, 255);
    pos += strlen(password);
 
    result =

@@ -2325,7 +2325,7 @@ int parseopts_table(const char **a, struct opt **opts,
 
 #if HAVE_STRUCT_IP_MREQN	    
 	    if (*tokp++ == ':') {
-	       strncpy((*opts)[i].value.u_ip_mreq.ifindex, tokp, IF_NAMESIZE);
+	       strncpy((*opts)[i].value.u_ip_mreq.ifindex, tokp, IF_NAMESIZE);	/* ok */
 	       Info4("setting option \"%s\" to {\"%s\",\"%s\",\"%s\"}",
 		     ent->desc->defname,
 		     (*opts)[i].value.u_ip_mreq.multiaddr,

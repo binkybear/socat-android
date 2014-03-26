@@ -1,5 +1,5 @@
-/* $Id$ */
-/* Copyright Gerhard Rieger 2007-2009 */
+/* xiosocketpair.c */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the internal xiosocketpair function */
@@ -61,7 +61,7 @@ int xiopty(int useptmx, int *ttyfdp, int *ptyfdp) {
 	       Warn2("ttyname(%d): %s", ptyfd, strerror(errno));
 	    }
 	 }
-	 strncpy(ptyname, tn, MAXPTYNAMELEN);
+	 ptyname[0] = '\0'; strncat(ptyname, tn, MAXPTYNAMELEN-1);
 #endif
 	 if ((ttyfd = Open(tn, O_RDWR|O_NOCTTY, 0620)) < 0) {
 	    Warn2("open(\"%s\", O_RDWR|O_NOCTTY, 0620): %s", tn, strerror(errno));
