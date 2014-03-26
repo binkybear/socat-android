@@ -165,6 +165,9 @@ porting:
 
 	Artem Mygaiev extended Cedril Priscals Android build script with pty code
 
+	The check for fips.h required stddef.h
+	Thanks to Matt Hilt for reporting this issue and sending a patch
+
 	libwrap always logs to syslog
 
 	added actual text version of GPLv2
