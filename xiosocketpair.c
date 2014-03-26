@@ -47,13 +47,13 @@ int xiopty(int useptmx, int *ttyfdp, int *ptyfdp) {
 	    Warn2("unlockpt(%d): %s", ptyfd, strerror(errno));
 	 }
 #endif /* HAVE_UNLOCKPT */
-#if HAVE_PTSNAME	/* AIX, not Linux */
+#if HAVE_PROTOTYPE_LIB_ptsname	/* AIX, not Linux */
 	 if ((tn = Ptsname(ptyfd)) == NULL) {
 	    Warn2("ptsname(%d): %s", ptyfd, strerror(errno));
 	 } else {
 	    Notice1("PTY is %s", tn);
 	 }
-#endif /* HAVE_PTSNAME */
+#endif /* HAVE_PROTOTYPE_LIB_ptsname */
 #if 0
 	 if (tn == NULL) {
 	    /*! ttyname_r() */

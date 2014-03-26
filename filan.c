@@ -264,7 +264,7 @@ int filan_stat(
    if (filan_rawoutput) {
       snprintf(stdevstr, 8, F_dev, buf->st_dev);
    } else {
-      snprintf(stdevstr, 8, "%hu,%hu", (unsigned short)buf->st_dev>>8, (unsigned short)buf->st_dev&0xff);
+      snprintf(stdevstr, 8, "%hu,%hu", (unsigned short)(buf->st_dev>>8), (unsigned short)(buf->st_dev&0xff));
    }
    fprintf(outfile, "%4d: %s\t%s\t"
 #if HAVE_STAT64
@@ -299,7 +299,7 @@ int filan_stat(
 	   buf->st_mode, buf->st_nlink, buf->st_uid,
 	   buf->st_gid,
 #if HAVE_ST_RDEV
-	   (unsigned short)buf->st_rdev>>8, (unsigned short)buf->st_rdev&0xff,
+	   (unsigned short)(buf->st_rdev>>8), (unsigned short)(buf->st_rdev&0xff),
 #endif
 	   buf->st_size
 #if HAVE_ST_BLKSIZE
