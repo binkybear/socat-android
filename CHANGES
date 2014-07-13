@@ -247,6 +247,8 @@ corrections:
 
 	Fixed Debug arguments issue in _socat()
 
+	Dual type addresses terminated when they were idle for EOF timeout time
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang

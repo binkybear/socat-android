@@ -139,7 +139,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 
       Debug7("data loop: sock1->eof=%d, sock2->eof=%d, 1->closing=%d, 2->closing=%d, wasaction=%d, total_to={"F_tv_sec"."F_tv_usec"}",
 	     XIO_RDSTREAM(sock1)->eof, XIO_RDSTREAM(sock2)->eof,
-	     sock1->stream.closing, sock2->stream.closing,
+	     XIO_RDSTREAM(sock1)->closing, XIO_RDSTREAM(sock2)->closing,
 	     wasaction, total_timeout.tv_sec, total_timeout.tv_usec);
 
       /* for ignoreeof */
@@ -183,7 +183,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
       }
 
 #if 1
-      if (sock1->stream.closing>=1 || sock2->stream.closing>=1) {
+      if (XIO_RDSTREAM(sock1)->closing>=1 || XIO_RDSTREAM(sock2)->closing>=1) {
 	 /* first eof already occurred, start end timer */
 	 timeout = xioparams->closwait;
 	 to = &timeout;
@@ -206,22 +206,22 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	    closing = 2;
 	 }
 #else
-	 if (sock1->stream.closing>=1 || sock2->stream.closing>=1) {
+	 if (XIO_RDSTREAM(sock1)->closing>=1 || XIO_RDSTREAM(sock2)->closing>=1) {
 	    /* first eof already occurred, start end timer */
 	    timeout = xioparams->closwait;
 	    to = &timeout;
-	    if (sock1->stream.closing==1) {
-	       sock1->stream.closing = 2;
+	    if (XIO_RDSTREAM(sock1)->closing==1) {
+	       XIO_RDSTREAM(sock1)->closing = 2;
 	    }
-	    if (sock2->stream.closing==1) {
-	       sock2->stream.closing = 2;
+	    if (XIO_RDSTREAM(sock2)->closing==1) {
+	       XIO_RDSTREAM(sock2)->closing = 2;
 	    }
 	 }
 #endif
 
 	 /* use the ignoreeof timeout if appropriate */
 	 if (polling) {
-	    if ((sock1->stream.closing == 0 && sock2->stream.closing == 0) ||
+	    if ((XIO_RDSTREAM(sock1)->closing == 0 && XIO_RDSTREAM(sock2)->closing == 0) ||
 		(xioparams->pollintv.tv_sec < timeout.tv_sec) ||
 		((xioparams->pollintv.tv_sec == timeout.tv_sec) &&
 		 xioparams->pollintv.tv_usec < timeout.tv_usec)) {
@@ -294,9 +294,9 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	 return -1;
       } else if (retval == 0) {
 	 Info2("poll timed out (no data within %ld.%06ld seconds)",
-	       (sock1->stream.closing>=1||sock2->stream.closing>=1)?
+	       (XIO_RDSTREAM(sock1)->closing>=1||XIO_RDSTREAM(sock2)->closing>=1)?
 	       xioparams->closwait.tv_sec:xioparams->total_timeout.tv_sec,
-	       (sock1->stream.closing>=1||sock2->stream.closing>=1)?
+	       (XIO_RDSTREAM(sock1)->closing>=1||XIO_RDSTREAM(sock2)->closing>=1)?
 	       xioparams->closwait.tv_usec:xioparams->total_timeout.tv_usec);
 	 if (polling && !wasaction) {
 	    /* there was a ignoreeof poll timeout, use it */
@@ -320,7 +320,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	    return 0;
 	 }
 
-	 if (sock1->stream.closing || sock2->stream.closing) {
+	 if (XIO_RDSTREAM(sock1)->closing || XIO_RDSTREAM(sock2)->closing) {
 	    break;
 	 }
 	 /* one possibility to come here is ignoreeof on some fd, but no EOF 
@@ -377,7 +377,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	 if ((bytes1 = xiotransfer(sock1, sock2, &buff, xioparams->bufsiz, false))
 	     < 0) {
 	    if (errno != EAGAIN) {
-	       /*sock2->closing = MAX(socks2->closing, 1);*/
+	       /*XIO_RDSTREAM(sock2)->closing = MAX(XIO_RDSTREAM(socks2)->closing, 1);*/
 	       Notice("socket 1 to socket 2 is in error");
 	       if (/*0 xioparams->lefttoright*/ !XIO_READABLE(sock2)) {
 		  break;
@@ -400,7 +400,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	    }
 	 }
 	 if (bytes1 == 0) {
-	    if (XIO_RDSTREAM(sock1)->ignoreeof && !sock1->stream.closing) {
+	    if (XIO_RDSTREAM(sock1)->ignoreeof && !XIO_RDSTREAM(sock1)->closing) {
 	       ;
 	    } else {
 	       XIO_RDSTREAM(sock1)->eof = 2;
@@ -416,7 +416,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	 if ((bytes2 = xiotransfer(sock2, sock1, &buff, xioparams->bufsiz, true))
 	     < 0) {
 	    if (errno != EAGAIN) {
-	       /*sock1->closing = MAX(sock1->closing, 1);*/
+	       /*XIO_RDSTREAM(sock1)->closing = MAX(XIO_RDSTREAM(sock1)->closing, 1);*/
 	       Notice("socket 2 to socket 1 is in error");
 	       if (/*0 xioparams->righttoleft*/ !XIO_READABLE(sock1)) {
 		  break;
@@ -439,7 +439,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	    }
 	 }
 	 if (bytes2 == 0) {
-	    if (XIO_RDSTREAM(sock2)->ignoreeof && !sock2->stream.closing) {
+	    if (XIO_RDSTREAM(sock2)->ignoreeof && !XIO_RDSTREAM(sock2)->closing) {
 	       ;
 	    } else {
 	       XIO_RDSTREAM(sock2)->eof = 2;
@@ -454,7 +454,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 
       if (bytes1 == 0 || XIO_RDSTREAM(sock1)->eof >= 2) {
 	 if (XIO_RDSTREAM(sock1)->ignoreeof &&
-	     !XIO_RDSTREAM(sock1)->actescape && !sock1->stream.closing) {
+	     !XIO_RDSTREAM(sock1)->actescape && !XIO_RDSTREAM(sock1)->closing) {
 	    Debug1("socket 1 (fd %d) is at EOF, ignoring",
 		   XIO_RDSTREAM(sock1)->rfd);	/*! */
             mayrd1 = true;
@@ -469,7 +469,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
          polling = 0;
       }
       if (XIO_RDSTREAM(sock1)->eof >= 2) {
-	 sock2->stream.closing = MAX(sock2->stream.closing, 1);
+	 XIO_RDSTREAM(sock2)->closing = MAX(XIO_RDSTREAM(sock2)->closing, 1);
 	 if (!XIO_READABLE(sock2)) {
 	    break;
 	 }
@@ -477,7 +477,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 
       if (bytes2 == 0 || XIO_RDSTREAM(sock2)->eof >= 2) {
 	 if (XIO_RDSTREAM(sock2)->ignoreeof &&
-	     !XIO_RDSTREAM(sock2)->actescape && !sock2->stream.closing) {
+	     !XIO_RDSTREAM(sock2)->actescape && !XIO_RDSTREAM(sock2)->closing) {
 	    Debug1("socket 2 (fd %d) is at EOF, ignoring",
 		   XIO_RDSTREAM(sock2)->rfd);
 	    mayrd2 = true;
@@ -492,7 +492,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
          polling = 0;
       }
       if (XIO_RDSTREAM(sock2)->eof >= 2) {
-	 sock1->stream.closing = MAX(sock1->stream.closing, 1);
+	 XIO_RDSTREAM(sock1)->closing = MAX(XIO_RDSTREAM(sock1)->closing, 1);
 	 if (!XIO_READABLE(sock1)) {
 	    break;
 	 }

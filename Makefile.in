@@ -22,8 +22,8 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 CC = @CC@
-CCOPTS = $(CCOPT) -Wall -Wno-parentheses
-CCOPTS = $(CCOPT)
+#CCOPTS = $(CCOPT) -Wall -Wno-parentheses
+CCOPTS = $(CCOPT) -pthread
 
 SYSDEFS = @SYSDEFS@
 CPPFLAGS = -I. @CPPFLAGS@

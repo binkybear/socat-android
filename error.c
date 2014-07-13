@@ -314,7 +314,7 @@ void msg2(
       bytes = sprintf(bufp, "%s ", diagopts.hostname), bufp+=bytes;
    }
    bytes = sprintf(bufp, "%s["F_pid".%lu] ",
-		   diagopts.progname, getpid(), (unsigned long)pthread_self());
+		   diagopts.progname, getpid(), pthread_self());
    bufp += bytes;
    syslp = bufp;
    *bufp++ = "DINWEF"[level];

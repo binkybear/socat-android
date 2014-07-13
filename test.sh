@@ -12654,6 +12654,46 @@ esac
 N=$((N+1))
 
 
+# in version 2.0.0-b7 (and earlier?) dual type addresses terminated when for 
+# a short time no data was transferred (EOF-timeout)
+NAME=DUAL_IDLE
+case "$TESTS" in
+*%$N%*|*%functions%*|*%bugs%*|*%$NAME%*)
+TEST="$NAME: do dual type addresses survive idle phases"
+# use a dual type address and check if it transfers data after some idle time
+if ! eval $NUMCOND; then :; else
+tf="$td/test$N.stdout"
+te="$td/test$N.stderr"
+tdiff="$td/test$N.diff"
+da="test$N $(date) $RANDOM"
+CMD0="$SOCAT $opts TCP-LISTEN:$PORT;reuseaddr PIPE"
+CMD1="$SOCAT $opts STDOUT%STDIN TCP-CONNECT:$LOCALHOST:$PORT"
+printf "test $F_n $TEST... " $N
+$CMD0 >/dev/null 2>"${te}0" &
+pid0=$!
+waittcp4port $PORT 1
+(sleep 1; echo "$da") |$CMD1 >"${tf}0" 2>"${te}1"
+rc1=$?
+kill $pid0 2>/dev/null; wait
+if echo "$da" |diff - "${tf}0" >"${tdiff}"; then
+    $PRINTF "$OK\n"
+    numOK=$((numOK+1))
+else
+    $PRINTF "$FAILED\n"
+    echo "$CMD0 &"
+    echo "$CMD1"
+    cat "${te}0"
+    cat "${te}1"
+    cat "$tdiff"
+    numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
+fi
+fi # NUMCOND
+ ;;
+esac
+PORT=$((PORT+1))
+N=$((N+1))
+
 
 echo "summary: $((N-1)) tests, $((numOK+numFAIL+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
 
@@ -12715,4 +12755,5 @@ fi
 fi # NUMCOND
  ;;
 esac
+#PORT=$((PORT+1))
 N=$((N+1))
