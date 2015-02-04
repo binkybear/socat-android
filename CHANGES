@@ -5,6 +5,10 @@ corrections:
 	compilation on FreeBSD 10.1 with clang. Thanks to Emanuel Haupt for
 	reporting this bug.
 
+	configure checked for OpenSSL EC_KEY assuming it is a define but it
+	is a type, thus OpenSSL ECDHE ciphers failed even on Linux. Thanks to
+	Andrey Arapov for reporting this bug.
+
 ####################### V 1.7.3.0:
 
 security:
