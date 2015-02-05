@@ -2317,8 +2317,8 @@ label(OPTION_FORK)dit(bf(tt(fork)))
    After establishing a connection, handles its channel in a child process and
    keeps the parent process attempting to produce more connections, either by
    listening or by connecting in a loop (link(example)(EXAMPLE_OPTION_FORK)).nl()
-   SSL-CONNECT and SSL-LISTEN differ in when they actually fork off the child:
-SSL-LISTEN forks em(before) the SSL handshake, while SSL-CONNECT forks
+   SSL-CONNECT and OPENSSL-LISTEN differ in when they actually fork off the child:
+OPENSSL-LISTEN forks em(before) the SSL handshake, while SSL-CONNECT forks
 em(afterwards).
    RETRY and FOREVER options are not inherited by the child process.nl()
    On some operating systems (e.g. FreeBSD) this option does not work for
@@ -3186,7 +3186,7 @@ should establish connections to host www.domain.org on port 22 then.
 
 
 label(EXAMPLE_ADDRESS_OPENSSL_CONNECT)
-dit(bf(tt(socat - SSL:server:4443,cafile=server.crt,cert=client.pem)))
+dit(bf(tt(socat - OPENSSL:server:4443,cafile=server.crt,cert=client.pem)))
 
 is an OpenSSL client that tries to establish a secure connection to an SSL
 server. Option link(cafile)(OPTION_OPENSSL_CAFILE) specifies a file that
@@ -3200,7 +3200,7 @@ The first address ('-') can be replaced by almost any other socat address.
 
 
 label(EXAMPLE_ADDRESS_OPENSSL_LISTEN)
-dit(bf(tt(socat SSL-LISTEN:4443,reuseaddr,pf=ip4,fork,cert=server.pem,cafile=client.crt PIPE)))
+dit(bf(tt(socat OPENSSL-LISTEN:4443,reuseaddr,pf=ip4,fork,cert=server.pem,cafile=client.crt PIPE)))
 
 is an OpenSSL server that accepts TCP connections, presents the certificate
 from the file server.pem and forces the client to present a certificate that is

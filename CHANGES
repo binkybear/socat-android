@@ -16,6 +16,11 @@ porting:
 	DTLSv1_client_method or DTLSv1_server_method.
 	Thanks to Simon Matter for sending a patch.
 
+doc:
+	socat.yo mentioned address name SSL-LISTEN which never existed (use
+	OPENSSL-LISTEN or SSL-L instead).
+	Thanks to Zhigang Wang for sending a patch.
+
 ####################### V 1.7.3.0:
 
 security:
