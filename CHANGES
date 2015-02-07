@@ -1,4 +1,10 @@
 
+corrections:
+	Type conflict between int and sig_atomic_t between declaration and
+	definition of diag_immediate_type and diag_immediate_exit broke
+	compilation on FreeBSD 10.1 with clang. Thanks to Emanuel Haupt for
+	reporting this bug.
+
 ####################### V 1.7.3.0:
 
 security:
