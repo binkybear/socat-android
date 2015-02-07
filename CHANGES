@@ -9,6 +9,8 @@ corrections:
 	is a type, thus OpenSSL ECDHE ciphers failed even on Linux. Thanks to
 	Andrey Arapov for reporting this bug.
 
+	Socat hung when configured with --disable-sycls.
+
 ####################### V 1.7.3.0:
 
 security:
