@@ -9005,25 +9005,75 @@ rc2="$?"
 i=0; while [ ! -s "$tf" -a "$i" -lt 10 ]; do  usleep 100000; i=$((i+1));  done
 kill "$pid1" 2>/dev/null; wait
 if [ "$rc2" -ne 0 ]; then
-   $PRINTF "$FAILED: $TRACE $SOCAT:\n"
-   echo "$CMD1 &"
-   echo "$CMD2"
-   cat "${te}1"
-   cat "${te}2"
+    $PRINTF "$FAILED: $TRACE $SOCAT:\n"
+    echo "$CMD1 &"
+    echo "$CMD2"
+    cat "${te}1"
+    cat "${te}2"
     numFAIL=$((numFAIL+1))
     listFAIL="$listFAIL $N"
 elif ! echo "$da" |diff - "$tf" >"$tdiff"; then
-   $PRINTF "$FAILED\n"
-   cat "$tdiff"
+    $PRINTF "$FAILED\n"
+    echo "$CMD1 &"
+    cat "${te}1"
+    cat "$tdiff"
     numFAIL=$((numFAIL+1))
     listFAIL="$listFAIL $N"
 else
-   $PRINTF "$OK\n"
-   if [ -n "$debug" ]; then cat $te; fi
-   numOK=$((numOK+1))
+    $PRINTF "$OK\n"
+    if [ -n "$debug" ]; then cat $te; fi
+    numOK=$((numOK+1))
 fi
 fi ;; # NUMCOND, feats
 esac
+N=$((N+1))
+
+
+# bind with Linux abstract UNIX domain addresses bound to filesystem socket
+# instead of abstract namespace
+NAME=ABSTRACT_BIND
+case "$TESTS" in
+*%$N%*|*%functions%*|*%bugs%*|*%socket%*|*%unix%*|*%abstract%*|*%$NAME%*)
+TEST="$NAME: abstract bind"
+# open an abstract client address with bind option, bind to the target socket.
+# send a datagram. 
+# when socat outputs the datagram it got the test succeeded
+if ! eval $NUMCOND; then :; 
+elif [ "$UNAME" != Linux ]; then
+    $PRINTF "test $F_n $TEST... ${YELLOW}only on Linux${NORMAL}\n" $N
+    numCANT=$((numCANT+1))
+else
+tf="$td/test$N.stdout"
+te="$td/test$N.stderr"
+tdiff="$td/test$N.diff"
+ts1="$td/test$N.sock1"
+da="test$N $(date) $RANDOM"
+CMD1="$TRACE $SOCAT $opts - ABSTRACT-SENDTO:$ts1,bind=$ts1"
+printf "test $F_n $TEST... " $N
+echo "$da" |$CMD1 >$tf 2>"${te}1"
+rc1=$?
+if [ $rc1 -ne 0 ]; then
+    $PRINTF "$FAILED\n"
+    echo "$CMD1" >&2
+    echo "rc=$rc1" >&2
+    cat "${te}1" >&2
+    numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
+elif echo "$da" |diff -q - $tf; then
+    $PRINTF "$OK\n"
+    numOK=$((numOK+1))
+else
+    $PRINTF "$FAILED\n"
+    echo "$CMD1" >&2
+    cat "${te}1" >&2
+    echo "$da" |diff - "$tf" >&2
+    numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
+fi
+fi # NUMCOND
+ ;;
+esac
+PORT=$((PORT+1))
 N=$((N+1))
 
 
