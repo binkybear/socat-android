@@ -1651,10 +1651,10 @@ testod () {
     echo "$dain" |$OD_C >"$tr"
 #    local daout="$(echo "$dain" |$OD_C)"
     $PRINTF "test $F_n %s... " $num "$title"
-    (psleep $T; echo "$dain"; psleep $T) |$$TRACE $SOCAT $opts "$arg1" "$arg2" >"$tf" 2>"$te"
+    (psleep $T; echo "$dain"; psleep $T) |$TRACE $SOCAT $opts "$arg1" "$arg2" >"$tf" 2>"$te"
     if [ "$?" != 0 ]; then
-	$PRINTF "$FAILED: $$TRACE $SOCAT:\n"
-	echo "$$TRACE $SOCAT $opts $arg1 $arg2"
+	$PRINTF "$FAILED: $TRACE $SOCAT:\n"
+	echo "$TRACE $SOCAT $opts $arg1 $arg2"
 	cat "$te"
 	numFAIL=$((numFAIL+1))
 	listFAIL="$listFAIL $N"
@@ -1665,7 +1665,7 @@ testod () {
 	numOK=$((numOK+1))
     else
 	$PRINTF "$FAILED: diff:\n"
-	echo "$$TRACE $SOCAT $opts $arg1 $arg2"
+	echo "$TRACE $SOCAT $opts $arg1 $arg2"
 	cat "$te"
 	cat "$tdiff"
 	numFAIL=$((numFAIL+1))
@@ -1680,7 +1680,7 @@ testaddrs () {
     local a A;
     for a in $@; do
 	A=$(echo "$a" |tr 'a-z-' 'A-Z_')
-	if $$TRACE $SOCAT -V |grep "#define WITH_$A 1\$" >/dev/null; then
+	if $TRACE $SOCAT -V |grep "#define WITH_$A 1\$" >/dev/null; then
 	    shift
 	    continue
 	fi
@@ -3964,8 +3964,8 @@ tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
 CMD2="$TRACE $SOCAT $opts exec:'openssl s_server -accept "$PORT" -quiet -cert testsrv.pem' pipe"
 #! CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT"
-#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$TRACE $SOCAT_EGD"
-CMD="$TRACE $SOCAT $opts - openssl,verify=0,$TRACE $SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
+#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$SOCAT_EGD"
+CMD="$TRACE $SOCAT $opts - openssl,verify=0,$SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4012,10 +4012,10 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-#CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
-CMD2="$TRACE $SOCAT $opts TCP4-LISTEN:$PORT,reuseaddr ^OPENSSL-LISTEN,$TRACE $SOCAT_EGD',cert=testsrv.crt,key=testsrv.key,verify=0|pipe'"
-#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,,verify=0,$TRACE $SOCAT_EGD"
-CMD="$TRACE $SOCAT $opts - openssl,verify=0,$TRACE $SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
+#CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
+CMD2="$TRACE $SOCAT $opts TCP4-LISTEN:$PORT,reuseaddr ^OPENSSL-LISTEN,$SOCAT_EGD',cert=testsrv.crt,key=testsrv.key,verify=0|pipe'"
+#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,,verify=0,$SOCAT_EGD"
+CMD="$TRACE $SOCAT $opts - openssl,verify=0,$SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4059,8 +4059,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip6,reuseaddr,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
-CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST6:$PORT,verify=0,$TRACE $SOCAT_EGD"
+CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip6,reuseaddr,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
+CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST6:$PORT,verify=0,$SOCAT_EGD"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4154,10 +4154,10 @@ TCP4CONNECT      ,       tcp4 TCP4-CONNECT:\$LOCALHOST:\$PORT TCP4-LISTEN:\$PORT
 TCP4LISTEN       ,       tcp4 TCP4-LISTEN:\$PORT TCP4-CONNECT:\$LOCALHOST:\$PORT,retry=3
 TCP6CONNECT      ,       tcp6 TCP6-CONNECT:\$LOCALHOST6:\$PORT TCP6-LISTEN:\$PORT waittcp6port\040\$PORT
 TCP6LISTEN       ,       tcp6 TCP6-LISTEN:\$PORT TCP6-CONNECT:\$LOCALHOST6:\$PORT,retry=3
-OPENSSL4CLIENT   OPENSSL tcp4 OPENSSL:\$LOCALHOST:\$PORT,verify=0 OPENSSL-LISTEN:\$PORT,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 waittcp4port\040\$PORT
-OPENSSL4SERVER   OPENSSL tcp4 OPENSSL-LISTEN:\$PORT,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 OPENSSL:\$LOCALHOST:\$PORT,verify=0,retry=3
-OPENSSL6CLIENT   OPENSSL tcp6 OPENSSL:\$LOCALHOST6:\$PORT,pf=ip6,verify=0 OPENSSL-LISTEN:\$PORT,pf=ip6,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 waittcp6port\040\$PORT
-OPENSSL6SERVER   OPENSSL tcp6 OPENSSL-LISTEN:\$PORT,pf=ip6,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 OPENSSL:\$LOCALHOST6:\$PORT,pf=ip6,verify=0,retry=3
+OPENSSL4CLIENT   OPENSSL tcp4 OPENSSL:\$LOCALHOST:\$PORT,verify=0 OPENSSL-LISTEN:\$PORT,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 waittcp4port\040\$PORT
+OPENSSL4SERVER   OPENSSL tcp4 OPENSSL-LISTEN:\$PORT,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 OPENSSL:\$LOCALHOST:\$PORT,verify=0,retry=3
+OPENSSL6CLIENT   OPENSSL tcp6 OPENSSL:\$LOCALHOST6:\$PORT,pf=ip6,verify=0 OPENSSL-LISTEN:\$PORT,pf=ip6,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 waittcp6port\040\$PORT
+OPENSSL6SERVER   OPENSSL tcp6 OPENSSL-LISTEN:\$PORT,pf=ip6,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 OPENSSL:\$LOCALHOST6:\$PORT,pf=ip6,verify=0,retry=3
 "
 
 
@@ -4179,8 +4179,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
-CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,verify=1,cafile=testsrv.crt,$TRACE $SOCAT_EGD"
+CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0 pipe"
+CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,verify=1,cafile=testsrv.crt,$SOCAT_EGD"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4225,8 +4225,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,verify=1,cert=testsrv.crt,key=testsrv.key,cafile=testcli.crt,$TRACE $SOCAT_EGD pipe"
-CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,verify=0,cert=testcli.crt,key=testcli.key,$TRACE $SOCAT_EGD"
+CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,verify=1,cert=testsrv.crt,key=testsrv.key,cafile=testcli.crt,$SOCAT_EGD pipe"
+CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,verify=0,cert=testcli.crt,key=testcli.key,$SOCAT_EGD"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4274,8 +4274,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,fips,$TRACE $SOCAT_EGD,cert=testsrvfips.crt,key=testsrvfips.key,cafile=testclifips.crt pipe"
-CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,fips,verify=1,cert=testclifips.crt,key=testclifips.key,cafile=testsrvfips.crt,$TRACE $SOCAT_EGD"
+CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,fips,$SOCAT_EGD,cert=testsrvfips.crt,key=testsrvfips.key,cafile=testclifips.crt pipe"
+CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,fips,verify=1,cert=testclifips.crt,key=testclifips.key,cafile=testsrvfips.crt,$SOCAT_EGD"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -4327,8 +4327,8 @@ else
     success=yes
     for srccompr in '' compress=auto compress=none; do
 	for dstcompr in '' compress=auto compress=none; do
-	    CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$TRACE $SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0,$dstcompr pipe"
-	    CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$TRACE $SOCAT_EGD,$srccompr"
+	    CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$SOCAT_EGD,cert=testsrv.crt,key=testsrv.key,verify=0,$dstcompr pipe"
+	    CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$SOCAT_EGD,$srccompr"
 	    eval "$CMD2 2>\"${te}1\" &"
 	    pid=$! # background process id
 	    waittcp4port $PORT
@@ -5151,11 +5151,11 @@ CMD2="$TRACE $SOCAT $opts -lpproxy tcp4-l:$((PORT+1)),reuseaddr,bind=$LOCALHOST,
 #CMD3="$TRACE $SOCAT $opts -lpwrapper tcp4-l:$((PORT+2)),reuseaddr,bind=$LOCALHOST,fork proxy:$LOCALHOST:$LOCALHOST:$((PORT+3)),pf=ip4,proxyport=$((PORT+1)),resolve"
 CMD3="$TRACE $SOCAT $opts -lpwrapper tcp4-l:$((PORT+2)),reuseaddr,bind=$LOCALHOST,fork proxy:$LOCALHOST:$((PORT+3)),resolve\\|tcp4:$LOCALHOST:$((PORT+1))"
 # this is our double client in the protected network using SSL
-#CMD4="$TRACE $SOCAT $opts -lp2client ssl:$LOCALHOST:$((PORT+2)),pf=ip4,retry=10,interval=1,cert=testcli.pem,cafile=testsrv.crt,$TRACE $SOCAT_EGD tcp4:$LOCALHOST:$PORT"
-#CMD4="$TRACE $SOCAT $opts -lp2client ssl:$LOCALHOST:$((PORT+2)),pf=ip4,cert=testcli.pem,cafile=testsrv.crt,$TRACE $SOCAT_EGD tcp4:$LOCALHOST:$PORT"
-CMD4="$TRACE $SOCAT $opts -lp2client ssl,cert=testcli.pem,cafile=testsrv.crt,$TRACE $SOCAT_EGD\|tcp4:$LOCALHOST:$((PORT+2)) tcp4:$LOCALHOST:$PORT"
+#CMD4="$TRACE $SOCAT $opts -lp2client ssl:$LOCALHOST:$((PORT+2)),pf=ip4,retry=10,interval=1,cert=testcli.pem,cafile=testsrv.crt,$SOCAT_EGD tcp4:$LOCALHOST:$PORT"
+#CMD4="$TRACE $SOCAT $opts -lp2client ssl:$LOCALHOST:$((PORT+2)),pf=ip4,cert=testcli.pem,cafile=testsrv.crt,$SOCAT_EGD tcp4:$LOCALHOST:$PORT"
+CMD4="$TRACE $SOCAT $opts -lp2client ssl,cert=testcli.pem,cafile=testsrv.crt,$SOCAT_EGD\|tcp4:$LOCALHOST:$((PORT+2)) tcp4:$LOCALHOST:$PORT"
 # this is the double server in the outside network
-CMD5="$TRACE $SOCAT $opts -lp2server -t1 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST ssl-l:$((PORT+3)),pf=ip4,reuseaddr,bind=$LOCALHOST,$TRACE $SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt"
+CMD5="$TRACE $SOCAT $opts -lp2server -t1 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST ssl-l:$((PORT+3)),pf=ip4,reuseaddr,bind=$LOCALHOST,$SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt"
 # this is the outside client that wants to use the protected server
 CMD6="$TRACE $SOCAT $opts -lpclient -t5 - tcp4:$LOCALHOST:$((PORT+4))"
 printf "test $F_n $TEST... " $N
@@ -5243,13 +5243,13 @@ CMD2="$TRACE $SOCAT $opts -lpproxy -t1 tcp4-l:$((PORT+1)),reuseaddr,bind=$LOCALH
 #CMD3="$TRACE $SOCAT $opts -lpwrapper -t3 tcp4-l:$((PORT+2)),reuseaddr,bind=$LOCALHOST,fork proxy:$LOCALHOST:$LOCALHOST:$((PORT+3)),pf=ip4,proxyport=$((PORT+1)),resolve"
 CMD3="$TRACE $SOCAT $opts -lu -lpwrapper -t3 tcp4-l:$((PORT+2)),reuseaddr,bind=$LOCALHOST,fork proxy:$LOCALHOST:$((PORT+3)),resolve\\|tcp4:$LOCALHOST:$((PORT+1))"
 # this is our double client in the protected network using SSL
-#CMD4="$TRACE $SOCAT $opts -lp2client -t3 ssl:$LOCALHOST:$((PORT+2)),retry=10,intervall=1,cert=testcli.pem,cafile=testsrv.crt,verify,fork,$TRACE $SOCAT_EGD tcp4:$LOCALHOST:$PORT"
-#CMD4="$TRACE $SOCAT $opts -lu -lp2client -t3 ssl,cert=testcli.pem,cafile=testsrv.crt,fork,$TRACE $SOCAT_EGD,retry=10,intervall=1\\|tcp4:$LOCALHOST:$((PORT+2)) tcp4:$LOCALHOST:$PORT"
-CMD4="$TRACE $SOCAT $opts -lp2client -t3 tcp4:$LOCALHOST:$((PORT+2)),fork ^ssl,cert=testcli.pem,cafile=testsrv.crt,$TRACE $SOCAT_EGD,retry=10,intervall=1\\|tcp4:$LOCALHOST:$PORT"
+#CMD4="$TRACE $SOCAT $opts -lp2client -t3 ssl:$LOCALHOST:$((PORT+2)),retry=10,intervall=1,cert=testcli.pem,cafile=testsrv.crt,verify,fork,$SOCAT_EGD tcp4:$LOCALHOST:$PORT"
+#CMD4="$TRACE $SOCAT $opts -lu -lp2client -t3 ssl,cert=testcli.pem,cafile=testsrv.crt,fork,$SOCAT_EGD,retry=10,intervall=1\\|tcp4:$LOCALHOST:$((PORT+2)) tcp4:$LOCALHOST:$PORT"
+CMD4="$TRACE $SOCAT $opts -lp2client -t3 tcp4:$LOCALHOST:$((PORT+2)),fork ^ssl,cert=testcli.pem,cafile=testsrv.crt,$SOCAT_EGD,retry=10,intervall=1\\|tcp4:$LOCALHOST:$PORT"
 # this is the double server in the outside network
-#CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,fork ssl-l:$((PORT+3)),pf=ip4,reuseaddr,bind=$LOCALHOST,$TRACE $SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt,retry=10"
-#CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,fork tcp4-l:$((PORT+3)),reuseaddr,bind=$LOCALHOST,retry=10\\|ssl-l,$TRACE $SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt"
-CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,backlog=3,fork ssl-l,$TRACE $SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt\\|tcp4-l:$((PORT+3)),reuseaddr,bind=$LOCALHOST,retry=20,interval=0.5"
+#CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,fork ssl-l:$((PORT+3)),pf=ip4,reuseaddr,bind=$LOCALHOST,$SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt,retry=10"
+#CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,fork tcp4-l:$((PORT+3)),reuseaddr,bind=$LOCALHOST,retry=10\\|ssl-l,$SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt"
+CMD5="$TRACE $SOCAT $opts -lp2server -t4 tcp4-l:$((PORT+4)),reuseaddr,bind=$LOCALHOST,backlog=3,fork ssl-l,$SOCAT_EGD,cert=testsrv.pem,cafile=testcli.crt\\|tcp4-l:$((PORT+3)),reuseaddr,bind=$LOCALHOST,retry=20,interval=0.5"
 # this is the outside client that wants to use the protected server
 CMD6="$TRACE $SOCAT $opts -lpclient -t6 - tcp4:$LOCALHOST:$((PORT+4)),retry=3"
 printf "test $F_n $TEST... " $N
@@ -5778,7 +5778,7 @@ elif ! testaddrs openssl >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "range=$SECONDADDR/32" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 4 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "range=$SECONDADDR/32" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 4 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5794,7 +5794,7 @@ elif ! testaddrs openssl >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "sp=$PORT" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 4 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "sp=$PORT" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 4 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5810,7 +5810,7 @@ elif ! testaddrs openssl >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "lowport" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 4 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "lowport" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 4 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5830,7 +5830,7 @@ ha="$td/hosts.allow"
 hd="$td/hosts.deny"
 $ECHO "socat: $SECONDADDR" >"$ha"
 $ECHO "ALL: ALL" >"$hd"
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "tcpwrap-etc=$td" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 4 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "tcpwrap-etc=$td" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 4 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5847,7 +5847,7 @@ elif ! testaddrs openssl >/dev/null; then
 else
 gentestcert testsrv
 gentestcert testcli
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify,cert=testsrv.crt,key=testsrv.key" "cafile=testcli.crt" "cafile=testsrv.crt" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,cert=testcli.pem,$TRACE $SOCAT_EGD" 4 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip4,reuseaddr,fork,retry=1,$SOCAT_EGD,verify,cert=testsrv.crt,key=testsrv.key" "cafile=testcli.crt" "cafile=testsrv.crt" "ssl:127.0.0.1:$PORT,cafile=testsrv.crt,cert=testcli.pem,$SOCAT_EGD" 4 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5864,7 +5864,7 @@ elif ! testaddrs openssl >/dev/null; then
 else
 gentestcert testsrv
 gentestcert testcli
-testserversec "$N" "$TEST" "$opts -s -lu -d" "ssl:$LOCALHOST:$PORT,pf=ip4,fork,retry=2,verify,cert=testcli.pem,$TRACE $SOCAT_EGD" "cafile=testsrv.crt" "cafile=testcli.crt" "ssl-l:$PORT,pf=ip4,reuseaddr,$TRACE $SOCAT_EGD,cafile=testcli.crt,cert=testsrv.crt,key=testsrv.key" 4 tcp "" -1
+testserversec "$N" "$TEST" "$opts -s -lu -d" "ssl:$LOCALHOST:$PORT,pf=ip4,fork,retry=2,verify,cert=testcli.pem,$SOCAT_EGD" "cafile=testsrv.crt" "cafile=testcli.crt" "ssl-l:$PORT,pf=ip4,reuseaddr,$SOCAT_EGD,cafile=testcli.crt,cert=testsrv.crt,key=testsrv.key" 4 tcp "" -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5884,7 +5884,7 @@ elif ! feat=$(testaddrs tcp ip6) || ! runsip6 >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "range=[::2/128]" "ssl:[::1]:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 6 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "range=[::2/128]" "ssl:[::1]:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 6 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5903,7 +5903,7 @@ elif ! feat=$(testaddrs tcp ip6) || ! runsip6 >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "sp=$PORT" "ssl:[::1]:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 6 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "sp=$PORT" "ssl:[::1]:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 6 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5922,7 +5922,7 @@ elif ! feat=$(testaddrs tcp ip6) || ! runsip6 >/dev/null; then
     numCANT=$((numCANT+1))
 else
 gentestcert testsrv
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "lowport" "ssl:[::1]:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 6 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "lowport" "ssl:[::1]:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 6 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -5942,7 +5942,7 @@ ha="$td/hosts.allow"
 hd="$td/hosts.deny"
 $ECHO "socat: [::2]" >"$ha"
 $ECHO "ALL: ALL" >"$hd"
-testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$TRACE $SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "tcpwrap-etc=$td" "ssl:[::1]:$PORT,cafile=testsrv.crt,$TRACE $SOCAT_EGD" 6 tcp $PORT -1
+testserversec "$N" "$TEST" "$opts -s" "ssl-l:$PORT,pf=ip6,reuseaddr,fork,retry=1,$SOCAT_EGD,verify=0,cert=testsrv.crt,key=testsrv.key" "" "tcpwrap-etc=$td" "ssl:[::1]:$PORT,cafile=testsrv.crt,$SOCAT_EGD" 6 tcp $PORT -1
 fi ;; # NUMCOND, feats
 esac
 PORT=$((PORT+1))
@@ -6246,10 +6246,10 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-#CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$TRACE $SOCAT_EGD,cert=$SRVCERT.pem,key=$SRVCERT.key,verify=0 pipe"
-CMD2="$TRACE $SOCAT $opts TCP4-LISTEN:$PORT,reuseaddr ^OPENSSL-LISTEN,$TRACE $SOCAT_EGD,cert=$SRVCERT.pem,key=$SRVCERT.key,verify=0\|pipe"
-#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$TRACE $SOCAT_EGD"
-CMD="$TRACE $SOCAT $opts - openssl,verify=0,$TRACE $SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
+#CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,pf=ip4,reuseaddr,$SOCAT_EGD,cert=$SRVCERT.pem,key=$SRVCERT.key,verify=0 pipe"
+CMD2="$TRACE $SOCAT $opts TCP4-LISTEN:$PORT,reuseaddr ^OPENSSL-LISTEN,$SOCAT_EGD,cert=$SRVCERT.pem,key=$SRVCERT.key,verify=0\|pipe"
+#CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,pf=ip4,verify=0,$SOCAT_EGD"
+CMD="$TRACE $SOCAT $opts - openssl,verify=0,$SOCAT_EGD|tcp4:$LOCALHOST:$PORT"
 $PRINTF "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$!	# background process id
@@ -6662,7 +6662,7 @@ NAME=SIMPLEPARSE
 case "$TESTS" in
 *%$N%*|*%functions%*|*%PARSE%*|*%$NAME%*)
 TEST="$NAME: invoke socat from socat"
-testecho "$N" "$TEST" "" exec:"$TRACE $SOCAT - exec\:$CAT,pipes" "$opts"
+testecho "$N" "$TEST" "" exec:"$SOCAT - exec\:$CAT,pipes" "$opts"
 esac
 N=$((N+1))
 
@@ -6709,7 +6709,7 @@ NAME=NESTEDSOCATEXEC
 case "$TESTS" in
 *%parse%*|*%$N%*|*%functions%*|*%$NAME%*)
 TEST="$NAME: does lexical analysis work sensibly (exec)"
-testecho "$N" "$TEST" "" "exec:'$TRACE $SOCAT - exec:$CAT,pipes'" "$opts" 1
+testecho "$N" "$TEST" "" "exec:\"$SOCAT - exec:$CAT,pipes\"" "$opts" 1
 esac
 N=$((N+1))
 
@@ -6717,7 +6717,7 @@ NAME=NESTEDSOCATSYSTEM
 case "$TESTS" in
 *%parse%*|*%$N%*|*%functions%*|*%$NAME%*)
 TEST="$NAME: does lexical analysis work sensibly (system)"
-testecho "$N" "$TEST" "" "system:\"$TRACE $SOCAT - exec:$CAT,pipes\"" "$opts" 1
+testecho "$N" "$TEST" "" "system:\"$SOCAT - exec:$CAT,pipes\"" "$opts" 1
 esac
 N=$((N+1))
 
@@ -10879,8 +10879,8 @@ te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da1="test$N $(date) $RANDOM"
 da2="test$N $(date) $RANDOM"
-CMD0="$TRACE $SOCAT $opts ${KEYW}-LISTEN:$PORT,reuseaddr,fork ^OPENSSL-LISTEN,$TRACE $SOCAT_EGD',cert=testsrv.crt,key=testsrv.key,verify=0|pipe'"
-CMD1="$TRACE $SOCAT $opts - openssl,verify=0,$TRACE $SOCAT_EGD|${KEYW}:$LOCALHOST:$PORT"
+CMD0="$TRACE $SOCAT $opts ${KEYW}-LISTEN:$PORT,reuseaddr,fork ^OPENSSL-LISTEN,$SOCAT_EGD',cert=testsrv.crt,key=testsrv.key,verify=0|pipe'"
+CMD1="$TRACE $SOCAT $opts - openssl,verify=0,$SOCAT_EGD|${KEYW}:$LOCALHOST:$PORT"
 printf "test $F_n $TEST... " $N
 eval "$CMD0 2>\"${te}0\" &"
 pid0=$!	# background process id
@@ -11362,8 +11362,8 @@ tf="$td/test$N.stdout"
 te="$td/test$N.stderr"
 tdiff="$td/test$N.diff"
 da="test$N $(date) $RANDOM"
-CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,$TRACE $SOCAT_EGD,ciphers=aNULL,verify=0 pipe"
-CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,ciphers=aNULL,verify=0,$TRACE $SOCAT_EGD"
+CMD2="$TRACE $SOCAT $opts OPENSSL-LISTEN:$PORT,reuseaddr,$SOCAT_EGD,ciphers=aNULL,verify=0 pipe"
+CMD="$TRACE $SOCAT $opts - openssl:$LOCALHOST:$PORT,ciphers=aNULL,verify=0,$SOCAT_EGD"
 printf "test $F_n $TEST... " $N
 eval "$CMD2 2>\"${te}1\" &"
 pid=$! # background process id
