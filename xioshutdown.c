@@ -1,5 +1,5 @@
 /* source: xioshutdown.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended shutdown function */
@@ -14,8 +14,13 @@ static int xioshut_sleep_kill(pid_t sub, unsigned long usec, int sig);
 static pid_t socat_kill_pid;	/* here we pass the pid to be killed in sighandler */
 
 static void signal_kill_pid(int dummy) {
+   int _errno;
+   _errno = errno;
+   diag_in_handler = 1;
    Notice("SIGALRM while waiting for w/o child process to die, killing it now");
    Kill(socat_kill_pid, SIGTERM);
+   diag_in_handler = 0;
+   errno = _errno;
 }
 
 /* how: SHUT_RD, SHUT_WR, or SHUT_RDWR */
@@ -248,11 +253,18 @@ static int xioshut_sleep_kill(pid_t sub, unsigned long usec, int sig) {
    int status = 0;
 
    /* we wait for the child process to die, but to prevent timeout
-      we raise an alarm after some time. */
-   /*   NOTE: the alarm does not terminate waitpid() on Linux/glibc
+      we raise an alarm after some time.
+      NOTE: the alarm does not terminate waitpid() on Linux/glibc
       (BUG?), 
       therefore we have to do the kill in the signal handler */
-   Signal(SIGALRM, signal_kill_pid);
+	 {
+	    struct sigaction act;
+	    sigfillset(&act.sa_mask);
+	    act.sa_flags = 0;
+	    act.sa_handler = signal_kill_pid;
+	    Sigaction(SIGALRM, &act, NULL);
+	 }
+
    socat_kill_pid = sub;
 #if HAVE_SETITIMER
    /*! with next feature release, we get usec resolution and an option

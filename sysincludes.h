@@ -26,7 +26,7 @@
 #include <syslog.h>	/* openlog(), syslog(), closelog() */
 #endif
 #include <signal.h>	/* signal(), SIGPIPE, SIG_IGN */
-#include <time.h>	/* struct timeval, strftime() */
+#include <time.h>	/* struct timeval, strftime(), clock_gettime() */
 #if 0
 #include <sys/timeb.h>	/* struct timeb */
 #endif

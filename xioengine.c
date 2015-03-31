@@ -1,5 +1,5 @@
 /* source: xioengine.c */
-/* Copyright Gerhard Rieger 2007-2008 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source file of the socat transfer loop/engine */
@@ -35,7 +35,9 @@ int childleftdata(xiofile_t *xfd) {
 	 in.revents = 0;
       }
       do {
+	 int _errno;
 	 retval = xiopoll(&in, 1, &timeout);
+	 _errno = errno; diag_flush(); errno = _errno;	/* just in case it's not debug level and Msg() not been called */
       } while (retval < 0 && errno == EINTR);
 
       if (retval < 0) {
@@ -269,10 +271,10 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	 }
          /* frame 0: innermost part of the transfer loop: check FD status */
 	 retval = xiopoll(fds, 4, to);
-	 if (retval >= 0 || errno != EINTR) {
+	 _errno = errno; diag_flush();	/* just in case it's not debug level and Msg() not been called */
+	 if (retval >= 0 || _errno != EINTR) {
 	    break;
 	 }
-	 _errno = errno;
 	 Info1("xiopoll(): %s", strerror(errno));
 	 errno = _errno;
       } while (true);

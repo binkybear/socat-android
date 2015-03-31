@@ -123,8 +123,8 @@ int sycSSL_CTX_load_verify_locations(SSL_CTX *ctx, const char *CAfile,
 				     const char *CApath) {
    int result;
    Debug7("SSL_CTX_load_verify_locations(%p, %s%s%s, %s%s%s)", ctx,
-	  CAfile?"\"":"", CAfile?CAfile:NULL, CAfile?"\"":"",
-	  CApath?"\"":"", CApath?CApath:NULL, CApath?"\"":"");
+	  CAfile?"\"":"", CAfile?CAfile:"", CAfile?"\"":"",
+	  CApath?"\"":"", CApath?CApath:"", CApath?"\"":"");
    result = SSL_CTX_load_verify_locations(ctx, CAfile, CApath);
    Debug1("SSL_CTX_load_verify_locations() -> %d", result);
    return result;

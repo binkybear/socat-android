@@ -1,5 +1,5 @@
 /* source: socat.c */
-/* Copyright Gerhard Rieger 2001-2009 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the main source, including command line option parsing and general
@@ -286,18 +286,23 @@ int main(int argc, const char *argv[]) {
    }
 #endif /* WITH_MSGLEVEL <= E_DEBUG */
 
-   /* not sure what signal should print a message */
-   Signal(SIGHUP, socat_signal);
-   Signal(SIGINT, socat_signal);
-   Signal(SIGQUIT, socat_signal);
-   Signal(SIGILL, socat_signal);
-   /* SIGABRT for assert; catching caused endless recursion on assert in libc
-      (tzfile.c:498: __tzfile_compute: Assertion 'num_types == 1' failed.) */
-   /*Signal(SIGABRT, socat_signal);*/
-   Signal(SIGBUS, socat_signal);
-   Signal(SIGFPE, socat_signal);
-   Signal(SIGSEGV, socat_signal);
-   Signal(SIGTERM, socat_signal);
+   {
+      struct sigaction act;
+      sigfillset(&act.sa_mask);
+      act.sa_flags = 0;
+      act.sa_handler = socat_signal;
+      /* not sure which signals should be cauhgt and print a message */
+      Sigaction(SIGHUP,  &act, NULL);
+      Sigaction(SIGINT,  &act, NULL);
+      Sigaction(SIGQUIT, &act, NULL);
+      Sigaction(SIGILL,  &act, NULL);
+      Sigaction(SIGABRT, &act, NULL);
+      Sigaction(SIGBUS,  &act, NULL);
+      Sigaction(SIGFPE,  &act, NULL);
+      Sigaction(SIGSEGV, &act, NULL);
+      Sigaction(SIGTERM, &act, NULL);
+   }
+   Signal(SIGPIPE, SIG_IGN);
 #if HAVE_SIGACTION
    {
       struct sigaction act;
@@ -564,11 +569,6 @@ int socat(int argc, const char *address1, const char *address2) {
    xiofile_t *xfd1, *xfd2;
 
    xioinitialize(XIO_MAYALL);
-#if 1
-   if (Signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-      Warn1("signal(SIGPIPE, SIG_IGN): %s", strerror(errno));
-   }
-#endif
 
    /* open the first (left most) address */
    if (xioparams->lefttoright) {
@@ -645,6 +645,10 @@ int socat(int argc, const char *address1, const char *address2) {
 
 
 void socat_signal(int signum) {
+   int _errno;
+   _errno = errno;
+   diag_in_handler = 1;
+   Notice1("socat_signal(): handling signal %d", signum);
    switch (signum) {
    case SIGQUIT:
    case SIGILL:
@@ -663,7 +667,11 @@ void socat_signal(int signum) {
    case SIGINT:
       Notice1("exiting on signal %d", signum); break;
    }
-   Exit(128+signum);
+   //Exit(128+signum);	/* internal cleanup + _exit() */
+   Notice1("socat_signal(): finishing signal %d", signum);
+   diag_exit(128+signum);    /*!!! internal cleanup + _exit() */
+   diag_in_handler = 0;
+   errno = _errno;
 }
 
 #if 0
@@ -720,8 +728,13 @@ static void socat_unlock(void) {
    if (!havelock)  return;
    if (socat_opts.lock.lockfile) {
       if (Unlink(socat_opts.lock.lockfile) < 0) {
-	 Warn2("unlink(\"%s\"): %s",
-	       socat_opts.lock.lockfile, strerror(errno));
+	 if (!diag_in_handler) {
+	    Warn2("unlink(\"%s\"): %s",
+		  socat_opts.lock.lockfile, strerror(errno));
+	 } else {
+	    Warn1("unlink(\"%s\"): "F_strerror,
+		  socat_opts.lock.lockfile);
+	 }
       } else {
 	 Info1("released lock \"%s\"", socat_opts.lock.lockfile);
       }
