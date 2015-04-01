@@ -18,6 +18,7 @@ security:
 	Turn off nested signal handler invocations
 	Thanks to Peter Lobsinger for reporting and explaining this issue.
 
+
 corrections:
 	LISTEN based addresses applied some address options, e.g. so-keepalive,
 	to the listening file descriptor instead of the connected file
@@ -263,6 +264,9 @@ porting:
 
 	added struct sockaddr_ll to union sockaddr_union to avoid "strict
 	aliasing" warnings (problem reported by Paul Wouters)
+
+	Socat included <sys/poll.h> instead of POSIX <poll.h>
+	Thanks to John Spencer for reporting this issue.
 
 new features:
 	added option max-children that limits the number of concurrent child
