@@ -166,6 +166,8 @@ corrections:
 	Test: ABSTRACT_BIND
 	Thanks to Denis Shatov for reporting this bug.
 
+	Fixed return value of nestlex()
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang

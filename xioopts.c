@@ -1798,7 +1798,11 @@ int parseopts_table(const char **a, struct opt **opts,
       parsres =
 	 nestlex(a, &tokp, &len, endkey, hquotes, squotes, nests,
 		 true, true, true, false);
-      if (parsres != 0) {
+      if (parsres < 0) {
+	 Error1("option too long:  \"%s\"", *a);
+	 return -1;
+      } else if (parsres > 0) {
+	 Error1("syntax error in \"%s\"", *a);
 	 return -1;
       }
       if (tokp == token) {
@@ -1835,7 +1839,11 @@ int parseopts_table(const char **a, struct opt **opts,
 	 parsres =
 	    nestlex(a, &tokp, &len, endval, hquotes, squotes, nests,
 		    true, true, true, false);
-	 if (parsres != 0) {
+	 if (parsres < 0) {
+	    Error1("option too long:  \"%s\"", *a);
+	    return -1;
+	 } else if (parsres > 0) {
+	    Error1("syntax error in \"%s\"", *a);
 	    return -1;
 	 }
 	 *tokp = '\0';
@@ -2309,10 +2317,17 @@ int parseopts_table(const char **a, struct opt **opts,
 
 	    /* parse first IP address, expect ':' */
 	    tokp = token;
-	    /*! result= */
-	    nestlex((const char **)&tokp, &buffp, &bufspc,
-		    ends, NULL, NULL, nests,
-		    true, true, false, false);
+	    parsres =
+	       nestlex((const char **)&tokp, &buffp, &bufspc,
+		       ends, NULL, NULL, nests,
+		       true, true, false, false);
+	    if (parsres < 0) {
+	       Error1("option too long:  \"%s\"", *a);
+	       return -1;
+	    } else if (parsres > 0) {
+	       Error1("syntax error in \"%s\"", *a);
+	       return -1;
+	    }
 	    if (*tokp != ':') {
 	       Error1("syntax in option %s: missing ':'", token);
 	    }
@@ -2322,10 +2337,17 @@ int parseopts_table(const char **a, struct opt **opts,
 	    ++tokp;
 	    /* parse second IP address, expect ':' or '\0'' */
 	    buffp = buff;
-	    /*! result= */
-	    nestlex((const char **)&tokp, &buffp, &bufspc,
-		    ends, NULL, NULL, nests,
-		    true, true, false, false);
+	    parsres =
+	       nestlex((const char **)&tokp, &buffp, &bufspc,
+		       ends, NULL, NULL, nests,
+		       true, true, false, false);
+	    if (parsres < 0) {
+	       Error1("option too long:  \"%s\"", *a);
+	       return -1;
+	    } else if (parsres > 0) {
+	       Error1("syntax error in \"%s\"", *a);
+	       return -1;
+	    }
 	    *buffp++ = '\0';
 	    (*opts)[i].value.u_ip_mreq.param2 = strdup(buff); /*!!! NULL */
 
@@ -2363,9 +2385,17 @@ int parseopts_table(const char **a, struct opt **opts,
 	    char buff[512], *buffp=buff; size_t bufspc = sizeof(buff)-1;
 
 	    tokp = token;
+	    parsres =
 	    nestlex((const char **)&tokp, &buffp, &bufspc,
 		    ends, NULL, NULL, nests,
 		    true, true, false, false);
+	    if (parsres < 0) {
+	       Error1("option too long:  \"%s\"", *a);
+	       return -1;
+	    } else if (parsres > 0) {
+	       Error1("syntax error in \"%s\"", *a);
+	       return -1;
+	    }
 	    if (*tokp != '\0') {
 	       Error1("trailing data in option \"%s\"", token);
 	    }
@@ -2833,6 +2863,7 @@ int retropt_bind(struct opt *opts,
    char *bindname, *bindp;
    char hostname[512], *hostp = hostname, *portp = NULL;
    size_t hostlen = sizeof(hostname)-1;
+   int parsres;
    int result;
 
    if (retropt_string(opts, OPT_BIND, &bindname) < 0) {
@@ -2866,8 +2897,16 @@ int retropt_bind(struct opt *opts,
    case AF_INET6:
 #endif /*WITH_IP6 */
       portallowed = (feats>=2);
-      nestlex((const char **)&bindp, &hostp, &hostlen, ends, NULL, NULL, nests,
-	      true, false, false, false);
+      parsres =
+	 nestlex((const char **)&bindp, &hostp, &hostlen, ends, NULL, NULL, nests,
+		 true, false, false, false);
+      if (parsres < 0) {
+	 Error1("option too long:  \"%s\"", bindp);
+	 return STAT_NORETRY;
+      } else if (parsres > 0) {
+	 Error1("syntax error in \"%s\"", bindp);
+	 return STAT_NORETRY;
+      }
       *hostp++ = '\0';
       if (!strncmp(bindp, portsep, strlen(portsep))) {
 	 if (!portallowed) {
