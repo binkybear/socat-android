@@ -302,6 +302,9 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	    if (XIO_RDSTREAM(sock1)->ignoreeof) {
 	       mayrd1 = 0;
 	    }
+	    if (XIO_RDSTREAM(sock2)->ignoreeof) {
+	       mayrd2 = 0;
+	    }
          } else if (polling && wasaction) {
             wasaction = 0;
 

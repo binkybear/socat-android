@@ -168,6 +168,10 @@ corrections:
 
 	Fixed return value of nestlex()
 
+	Option ignoreeof on the right address hung.
+	Test: IGNOREEOF_REV
+	Thanks to Franz Fasching for reporting this bug.
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
