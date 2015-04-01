@@ -1,5 +1,5 @@
 /* source: xio.h */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 #ifndef __xio_h_included
@@ -394,10 +394,12 @@ typedef struct single {
 	    char    *hosts_deny_table;
 #endif
 	 } ip;
-	 struct {
+#endif /* _WITH_IP4 || _WITH_IP6 */
+#if WITH_UNIX
+ 	 struct {
 	    bool     tight;
 	 } un;
-#endif /* _WITH_IP4 || _WITH_IP6 */
+#endif /* WITH_UNIX */
       } socket;
 #endif /* _WITH_SOCKET */
       struct {
