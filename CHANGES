@@ -338,6 +338,9 @@ porting:
 
 	Use 'environ' variable only when provided by runtime
 
+	Changes for Openindiana: define _XPG4_2, __EXTENSIONS__,
+	_POSIX_PTHREAD_SEMANTICS; and minor changes
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.

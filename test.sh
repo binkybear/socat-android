@@ -3760,7 +3760,9 @@ da="test$N $(date) $RANDOM"
 CMD="$TRACE $SOCAT -u $opts - open:$ff,append,o-trunc"
 printf "test $F_n $TEST... " $N
 rm -f $ff; $ECHO "prefix-\c" >$ff
-if ! echo "$da" |$CMD >$tf 2>"$te" ||
+echo "$da" |$CMD >$tf 2>"$te"
+rc0=$?
+if ! [ $rc0 = 0 ] ||
     ! echo "$da" |diff - $ff >"$tdiff"; then
     $PRINTF "$FAILED: $TRACE $SOCAT:\n"
     echo "$CMD"
@@ -9965,21 +9967,21 @@ if [ "$rc1" -ne 0 ]; then
     numCANT=$((numCANT+1))
 elif ! grep "ancillary message: $SCM_TYPE: $SCM_NAME=" ${te}0 >/dev/null; then
     $PRINTF "$FAILED\n"
+    echo "variable $SCM_TYPE: $SCM_NAME not set"
     echo "$CMD0 &"
     echo "$CMD1"
     grep " $LEVELS " "${te}0"
     grep " $LEVELS " "${te}1"
-    echo "variable $SCM_TYPE: $SCM_NAME not set"
     numFAIL=$((numFAIL+1))
     listFAIL="$listFAIL $N"
 elif ! grep "ancillary message: $SCM_TYPE: $SCM_NAME=$SCM_VALUE" ${te}0 >/dev/null; then
     $PRINTF "$FAILED\n"
+    badval="$(grep "ancillary message: $SCM_TYPE: $SCM_NAME" ${te}0 |sed 's/.*=//g')"
+    echo "variable $SCM_TYPE: $SCM_NAME has value \"$badval\" instead of pattern \"$SCM_VALUE\"" >&2
     echo "$CMD0 &"
     echo "$CMD1"
     grep " $LEVELS " "${te}0"
     grep " $LEVELS " "${te}1"
-    badval="$(grep "ancillary message: $SCM_TYPE: $SCM_NAME" ${te}0 |sed 's/.*=//g')"
-    echo "variable $SCM_TYPE: $SCM_NAME has value \"$badval\" instead of \"$SCM_VALUE\""
     numFAIL=$((numFAIL+1))
     listFAIL="$listFAIL $N"
 else
