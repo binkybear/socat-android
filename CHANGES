@@ -319,6 +319,9 @@ porting:
 	compile errors when they were already provided by build framework.
 	Thanks to Liyu Liu for providing a patch.
 
+	David Arnstein contributed a patch for NetBSD 5.1 including stdbool.h
+	support and appropriate files in Config/
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.
