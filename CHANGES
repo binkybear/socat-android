@@ -309,6 +309,10 @@ porting:
 	broke cross compiling. The particular check gets reverted.
 	Thanks to Ross Burton and Danomi Manchego for reporting this issue.
 
+	Debian Bug#764251: Set the build timestamp to a deterministic time:
+	support external BUILD_DATE env var to allow to build reproducable
+	binaries
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.
