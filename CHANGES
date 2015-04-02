@@ -202,6 +202,8 @@ corrections:
 	files that failed to compile due to missing IPPROTO_TCP.
 	Thanks to Thierry Fournier for report and patch.
 
+	Fixed a few minor bugs with OpenSSL in configure and with messages
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
@@ -306,6 +308,8 @@ new features:
 	SOCAT_OPENSSL_X509V3_SUBJECTALTNAME_DNS
 	Tests: ENV_OPENSSL_{CLIENT,SERVER}_X509_*
 
+	Added support for methods TLSv1, TLSv1.1, TLSv1.2, and DTLS1
+	Tests: OPENSSL_METHOD_*
 
 docu
 	minor corrections in docu (thanks to Paggas)
