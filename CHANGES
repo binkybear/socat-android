@@ -210,6 +210,9 @@ corrections:
 	Christophe Leroy provided a patch that fixes memory leaks reported by
 	valgrind
 
+	Help for filan -L was bad, is now corrected to:
+	"follow symbolic links instead of showing their properties"
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
