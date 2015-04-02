@@ -1595,6 +1595,8 @@ const struct optname optionnames[] = {
 	IF_IPAPP  ("tcpwrapper",	&opt_tcpwrappers)
 	IF_IPAPP  ("tcpwrappers",	&opt_tcpwrappers)
 #endif
+	IF_TERMIOS("termios-cfmakeraw",	&opt_termios_cfmakeraw)
+	IF_TERMIOS("termios-rawer",	&opt_termios_rawer)
 #ifdef O_TEXT
 	IF_ANY    ("text",	&opt_o_text)
 #endif
@@ -3635,6 +3637,13 @@ int applyopts(int fd, struct opt *opts, enum e_phase phase) {
 #endif
 				 );
 	    termarg.c_lflag |= (0);
+	    termarg.c_cc[VMIN] = 1;
+	    termarg.c_cc[VTIME] = 0;
+	    break;
+	 case OPT_TERMIOS_RAWER:
+	    termarg.c_iflag = 0;
+	    termarg.c_oflag = 0;
+	    termarg.c_lflag = 0;
 	    termarg.c_cc[VMIN] = 1;
 	    termarg.c_cc[VTIME] = 0;
 	    break;
