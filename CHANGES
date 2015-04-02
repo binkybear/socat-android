@@ -356,12 +356,17 @@ new features:
 	Added a new option termios-rawer for ptys.
 	Thanks to Christian Vogelgsang for pointing me to this requirement
 
-docu
+doc:
 	minor corrections in docu (thanks to Paggas)
 
 	minor corrections in doc (2x)
 
 	client process -> child process
+
+	In the man page the PTY example was badly formatted. Thanks to
+	J.F.Sebastian for sending a patch.
+
+	Added missing CVE ids to security issues in CHANGES
 
 testing:
 	Do not distribute testcert.conf with socat source but generate it
@@ -377,6 +382,7 @@ security:
 ####################### V 2.0.0-b6:
 
 security:
+	CVE-2013-3571:
 	after refusing a client connection due to bad source address or source
 	port socat shutdown() the socket but did not close() it, resulting in
 	a file descriptor leak in the listening process, visible with lsof and
@@ -387,6 +393,7 @@ security:
 ####################### V 2.0.0-b5:
 
 security:
+	CVE-2012-0219:
 	fixed a possible heap buffer overflow in the readline address. This bug
 	could be exploited when all of the following conditions were met:
 	1) one of the addresses is READLINE without the noprompt and without the
@@ -400,6 +407,7 @@ security:
 ####################### V 2.0.0-b4:
 
 security:
+	CVE-2010-2799:
 	fixed a stack overflow vulnerability that occurred when command
 	line arguments (whole addresses, host names, file names) were longer
 	than 512 bytes.
@@ -883,7 +891,8 @@ further corrections:
 
 ####################### V 1.4.0.3:
 
-corrections:
+security:
+	CVE-2004-1484:
 	fix to a syslog() based format string vulnerability that can lead to
 	remote code execution. See advisory socat-adv-1.txt
 
