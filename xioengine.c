@@ -159,6 +159,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	       if (total_timeout.tv_sec < 0 ||
 		   total_timeout.tv_sec == 0 && total_timeout.tv_usec < 0) {
 		  Notice("inactivity timeout triggered");
+		  free(buff);
 		  return 0;
 	       }
 	    }
@@ -172,7 +173,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	 /* there is a ignoreeof poll timeout, use it */
 	 timeout = xioparams->pollintv;
 	 to = &timeout;
-      } else if (xioparams->total_timeout.tv_sec != 0 ||
+     } else if (xioparams->total_timeout.tv_sec != 0 ||
 		 xioparams->total_timeout.tv_usec != 0) {
 	 /* there might occur a total inactivity timeout */
 	 timeout = xioparams->total_timeout;
@@ -289,7 +290,8 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 		 fds[0].fd, fds[0].events, fds[1].fd, fds[1].events,
 		 fds[2].fd, fds[2].events, fds[3].fd, fds[3].events,
 		 timeout.tv_sec, timeout.tv_usec, strerror(errno));
-	    return -1;
+	 free(buff);
+	 return -1;
       } else if (retval == 0) {
 	 Info2("poll timed out (no data within %ld.%06ld seconds)",
 	       (sock1->stream.closing>=1||sock2->stream.closing>=1)?
@@ -312,6 +314,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 		    xioparams->total_timeout.tv_usec != 0) {
 	    /* there was a total inactivity timeout */
 	    Notice("inactivity timeout triggered");
+	    free(buff);
 	    return 0;
 	 }
 
@@ -332,6 +335,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
                named pipe. a read() might imm. return with 0 bytes, resulting
                in a loop? */ 
             Error1("poll(...[%d]: invalid request", fd1in->fd);
+	    free(buff);
             return -1;
          }
  	 mayrd1 = true;
@@ -343,6 +347,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	  (fd2in->revents)) {
 	 if (fd2in->revents & POLLNVAL) {
 	    Error1("poll(...[%d]: invalid request", fd2in->fd);
+	    free(buff);
 	    return -1;
 	 }
 	 mayrd2 = true;
@@ -351,6 +356,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
       if (XIO_GETWRFD(sock1) >= 0 && fd1out->fd >= 0 && fd1out->revents) {
 	 if (fd1out->revents & POLLNVAL) {
 	    Error1("poll(...[%d]: invalid request", fd1out->fd);
+	    free(buff);
 	    return -1;
 	 }
 	 maywr1 = true;
@@ -358,6 +364,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
       if (XIO_GETWRFD(sock2) >= 0 && fd2out->fd >= 0 && fd2out->revents) {
 	 if (fd2out->revents & POLLNVAL) {
 	    Error1("poll(...[%d]: invalid request", fd2out->fd);
+	    free(buff);
 	    return -1;
 	 }
 	 maywr2 = true;
@@ -494,6 +501,7 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
    xioclose(sock1);
    xioclose(sock2);
 
+   free(buff);
    return 0;
 }
 

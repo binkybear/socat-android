@@ -207,6 +207,9 @@ corrections:
 	Socat did not work in FIPS mode because 1024 instead of 512 bit DH prime
 	is required. Thanks to Zhigang Wang for reporting and sending a patch.
 
+	Christophe Leroy provided a patch that fixes memory leaks reported by
+	valgrind
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
