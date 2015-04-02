@@ -331,6 +331,8 @@ porting:
 	including <linux/errqueue.h> and a weakness in the conditional code.
 	Thanks to Michel Normand for reporting this issue.
 
+	Use 'environ' variable only when provided by runtime
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.

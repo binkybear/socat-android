@@ -1288,6 +1288,7 @@ static int openssl_delete_cert_info(void) {
    for (i = 0; i < l; ++i)  envprefix[i] = toupper(envprefix[i]);
    strncat(envprefix+l, "_OPENSSL_", XIO_ENVNAMELEN-l-1);
 
+#if HAVE_VAR_ENVIRON
    entry = (const char **)environ;
    while (*entry != NULL) {
       if (!strncmp(*entry, envprefix, strlen(envprefix))) {
@@ -1299,6 +1300,7 @@ static int openssl_delete_cert_info(void) {
 	 ++entry;
       }
    }
+#endif /* HAVE_VAR_ENVIRON */
    return 0;
 }
 
