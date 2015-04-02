@@ -315,6 +315,10 @@ porting:
 
 	Joachim Fenkes provided an new adapted spec file.
 
+	Type bool and macros Min and Max are defined by socat which led to
+	compile errors when they were already provided by build framework.
+	Thanks to Liyu Liu for providing a patch.
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.
