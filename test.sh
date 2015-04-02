@@ -1825,6 +1825,7 @@ runsip4 () {
     SunOS) l=$($IFCONFIG -a |grep 'inet ') ;;
     Darwin)l=$($IFCONFIG lo0 |fgrep 'inet 127.0.0.1 ') ;;
     DragonFly)l=$($IFCONFIG -a |fgrep 'inet 127.0.0.1 ');;
+    CYGWIN*) l=$(ipconfig |grep IPv4);;
     *)     l=$($IFCONFIG -a |grep ' ::1[^:0-9A-Fa-f]') ;;
     esac
     [ -z "$l" ] && return 1    
@@ -1851,6 +1852,7 @@ runsip6 () {
     OSF1)  l=$($IFCONFIG -a |grep ' inet6 ') ;;
     SunOS) l=$($IFCONFIG -a |grep 'inet6 ') ;;
     Darwin)l=$($IFCONFIG lo0 |grep 'inet6 ::1 ') ;;
+    CYGWIN*) l=$(ipconfig |grep IPv6);;
     *)     l=$($IFCONFIG -a |grep ' ::1[^:0-9A-Fa-f]') ;;
     esac
     [ -z "$l" ] && return 1    
