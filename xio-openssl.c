@@ -1055,6 +1055,10 @@ int
 	    return STAT_RETRYLATER;
 	 }
       }
+#ifdef HAVE_SSL_CTX_set_default_verify_paths
+   } else {
+      SSL_CTX_set_default_verify_paths(*ctx);
+#endif
    }
 
    if (opt_cert) {
