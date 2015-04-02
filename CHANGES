@@ -313,6 +313,8 @@ porting:
 	support external BUILD_DATE env var to allow to build reproducable
 	binaries
 
+	Joachim Fenkes provided an new adapted spec file.
+
 new features:
 	added option max-children that limits the number of concurrent child
 	processes. Thanks to Sam Liddicott for providing the patch.
