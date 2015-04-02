@@ -164,8 +164,17 @@ int _xioopen_progcall(int xioflags,	/* XIO_RDONLY etc. */
    if (!retropt_int(popts, OPT_LEFTFD,  &fdi)) {
       fdo = fdi;
    }
-   retropt_int(popts, OPT_LEFTINFD,  &fdi);
-   retropt_int(popts, OPT_LEFTOUTFD, &fdo);
+
+   if (retropt_int(popts, OPT_LEFTINFD,  (unsigned short *)&fdi) >= 0) {
+      if ((xioflags&XIO_ACCMODE) == XIO_RDONLY) {
+	 Error("_xioopen_progcall(): option fdin is useless in read-only mode");
+      }
+   }
+   if (retropt_int(popts, OPT_LEFTOUTFD, (unsigned short *)&fdo) >= 0) {
+      if ((xioflags&XIO_ACCMODE) == XIO_WRONLY) {
+	 Error("_xioopen_progcall(): option fdout is useless in write-only mode");
+      }
+   }
 
    if (!retropt_int(popts, OPT_RIGHTFD,  &rightin)) {
       rightout = rightin;
