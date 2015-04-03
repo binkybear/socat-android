@@ -162,7 +162,7 @@ socat.tar.bz2: socat.tar
 VERSION = `sed 's/"//g' VERSION`
 TARDIR = socat-$(VERSION)
 socat.tar: configure.in configure Makefile.in config.h.in install-sh VERSION $(CFILES) $(HFILES) $(DOCFILES) $(SHFILES) $(OSFILES) $(TESTFILES) \
-	confiugre.ac
+	configure.ac
 	if [ ! -d $(TARDIR) ]; then mkdir $(TARDIR); fi
 	tar cf - $+ |(cd $(TARDIR); tar xf -)
 	tar cvf socat.tar $(TARDIR)

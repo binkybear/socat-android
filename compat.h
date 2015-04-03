@@ -288,6 +288,8 @@ typedef int sig_atomic_t;
 #     define F_off "%""d"
 #  elif HAVE_BASIC_OFF_T==5
 #     define F_off "%ld"
+#  elif HAVE_BASIC_OFF_T==7
+#     define F_off "%Ld"
 #  else
 #error "HAVE_BASIC_OFF_T is out of range:" HAVE_BASIC_OFF_T
 #  endif
@@ -344,7 +346,7 @@ typedef int sig_atomic_t;
 #  elif HAVE_BASIC_DEV_T==8
 #define F_dev "%Lu"
 #  else
-#error "HAVE_TYPEOF_ST_DEV is out of range:" HAVE_TYPEOF_ST_DEV
+#error "HAVE_BASIC_DEV_T is out of range:" HAVE_BASIC_DEV_T
 #  endif
 #endif
 

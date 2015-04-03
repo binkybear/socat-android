@@ -6827,7 +6827,7 @@ tdiff="$td/test$N.diff"
 # if they are scanned incorrectly, socat will see an "unknown option"
 dain='(,)[,]{,}","([),])hugo'
 daout='(,)[,]{,},([),])hugo'
-"$TRACE $SOCAT" $opts -u "exec:echo $dain" - >"$tf" 2>"$te"
+$TRACE $SOCAT $opts -u "exec:echo $dain" - >"$tf" 2>"$te"
 rc=$?
 echo "$daout" |diff "$tf" - >"$tdiff"
 if [ "$rc" -ne 0 ]; then
@@ -10077,7 +10077,7 @@ if [ "$tcp" != ',' ]; then
     tca="$tca:$tcp"
 fi
 #CMD0="$TRACE $SOCAT $opts -u $KEYW-LISTEN:$tsa1 system:\"export -p\""
-CMD0="$TRACE $SOCAT $opts -u -lpsocat $KEYW-LISTEN:$tsa1 system:\"echo SOCAT_SOCKADDR=\\\$TRACE $SOCAT_SOCKADDR; echo SOCAT_PEERADDR=\\\$TRACE $SOCAT_PEERADDR; echo SOCAT_SOCKPORT=\\\$TRACE $SOCAT_SOCKPORT; echo SOCAT_PEERPORT=\\\$TRACE $SOCAT_PEERPORT; sleep 1\""
+CMD0="$TRACE $SOCAT $opts -u -lpsocat $KEYW-LISTEN:$tsa1 system:\"echo SOCAT_SOCKADDR=\\\$SOCAT_SOCKADDR; echo SOCAT_PEERADDR=\\\$SOCAT_PEERADDR; echo SOCAT_SOCKPORT=\\\$SOCAT_SOCKPORT; echo SOCAT_PEERPORT=\\\$SOCAT_PEERPORT; sleep 1\""
 CMD1="$TRACE $SOCAT $opts -u - $KEYW-CONNECT:$tsa,bind=$tca"
 printf "test $F_n $TEST... " $N
 eval "$CMD0 2>\"${te}0\" >\"$tf\" &"
@@ -10177,7 +10177,7 @@ case "X$IPPORT" in
     tsa="$tra"
 esac
 #CMD0="$TRACE $SOCAT $opts -u $KEYW-RECVFROM:$tra,reuseaddr,$SCM_RECV system:\"export -p\""
-CMD0="$TRACE $SOCAT $opts -u -lpsocat $KEYW-RECVFROM:$tra,reuseaddr,$SCM_RECV system:\"echo \\\$TRACE $SOCAT_$SCM_ENVNAME\""
+CMD0="$TRACE $SOCAT $opts -u -lpsocat $KEYW-RECVFROM:$tra,reuseaddr,$SCM_RECV system:\"echo \\\$SOCAT_$SCM_ENVNAME\""
 CMD1="$TRACE $SOCAT $opts -u - $KEYW-SENDTO:$tsa,$SCM_ENABLE"
 printf "test $F_n $TEST... " $N
 # is this option supported?
@@ -10203,7 +10203,7 @@ if [ "$rc1" -ne 0 ]; then
     cat "${te}1"
     numCANT=$((numCANT+1))
 #elif ! egrep "^export SOCAT_$SCM_ENVNAME=[\"']?$SCM_VALUE[\"']?\$" ${tf} >/dev/null; then
-#elif ! eval echo "$TRACE $SOCAT_\$SCM_VALUE" |diff - "${tf}" >/dev/null; then
+#elif ! eval echo "$SOCAT_\$SCM_VALUE" |diff - "${tf}" >/dev/null; then
 elif ! expr "$(cat "$tf")" : "$(eval echo "\$SCM_VALUE")" >/dev/null; then
     $PRINTF "$FAILED\n"
     echo "$CMD0 &"
@@ -11289,7 +11289,7 @@ NAME=${EXEC}1BI_CAT_OD_HALFCLOSE_$COMMNAME
 case  "$TESTS" in
 *%$N%*|*%functions%*|*%chain%*|*%$exec%*|*%${exec}1%*|*%$NAME%*)
 TEST="$NAME: ${exec}1 in birectional chain, both directions ($commname)"
-testod "$N" "$TEST" "STDIO" "${EXEC}1:$TRACE $SOCAT -u - -%${EXEC}1:$OD_C|PIPE" "$opts -c$c" "$val_t"
+testod "$N" "$TEST" "STDIO" "${EXEC}1:$SOCAT -u - -%${EXEC}1:$OD_C|PIPE" "$opts -c$c" "$val_t"
 esac
 N=$((N+1))
     ;;
