@@ -1,5 +1,5 @@
 /* source: xio-fd.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this file contains common file descriptor related option definitions */
@@ -75,9 +75,9 @@ const struct optdesc opt_cool_write = { "cool-write", "coolwrite", OPT_COOL_WRIT
 
 /* control closing of connections */
 const struct optdesc opt_end_close = { "end-close", "close",     OPT_END_CLOSE, GROUP_FD, PH_INIT, TYPE_CONST, OFUNC_OFFSET, XIO_OFFSETOF(howtoclose), XIOCLOSE_CLOSE };
-const struct optdesc opt_shut_none = { "shut-none", NULL,    OPT_SHUT_NONE,  GROUP_FD, PH_INIT, TYPE_BOOL,  OFUNC_OFFSET, XIO_OFFSETOF(howtoshut), XIOSHUT_NONE };
-const struct optdesc opt_shut_down = { "shut-down", NULL,    OPT_SHUT_DOWN,  GROUP_FD, PH_INIT, TYPE_BOOL,  OFUNC_OFFSET, XIO_OFFSETOF(howtoshut), XIOSHUT_DOWN };
-const struct optdesc opt_shut_close= { "shut-close", NULL,   OPT_SHUT_CLOSE, GROUP_FD, PH_INIT, TYPE_BOOL,  OFUNC_OFFSET, XIO_OFFSETOF(howtoshut), XIOSHUT_CLOSE };
+const struct optdesc opt_shut_none = { "shut-none", NULL,        OPT_SHUT_NONE, GROUP_FD, PH_INIT, TYPE_CONST, OFUNC_OFFSET, XIO_OFFSETOF(howtoshut),  XIOSHUT_NONE };
+const struct optdesc opt_shut_down = { "shut-down", NULL,        OPT_SHUT_DOWN, GROUP_FD, PH_INIT, TYPE_CONST, OFUNC_OFFSET, XIO_OFFSETOF(howtoshut),  XIOSHUT_DOWN };
+const struct optdesc opt_shut_close= { "shut-close", NULL,       OPT_SHUT_CLOSE,GROUP_FD, PH_INIT, TYPE_CONST, OFUNC_OFFSET, XIO_OFFSETOF(howtoshut),  XIOSHUT_CLOSE };
 const struct optdesc opt_shut_null = { "shut-null", NULL,        OPT_SHUT_NULL, GROUP_FD, PH_INIT, TYPE_CONST, OFUNC_OFFSET, XIO_OFFSETOF(howtoshut), XIOSHUT_NULL };
 
 /****** generic ioctl() options ******/

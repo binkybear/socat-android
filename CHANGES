@@ -242,6 +242,9 @@ corrections:
 	Address FD was not read from when used bidirectionally. Thanks to David
 	Halls for reporting this bug.
 
+	Options shut-none, shut-down, shut-close all might not have worked
+	correctly. Thanks to Ray Song for reporting this issue.
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
