@@ -228,6 +228,8 @@ corrections:
 	mixed directions
 	socat_open sprintf overflow
 
+	fixed bidirectional UDP-LISTEN error
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
