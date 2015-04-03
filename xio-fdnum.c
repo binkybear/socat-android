@@ -61,8 +61,8 @@ static int xioopen_fdnum(int argc, const char *argv[], struct opt *opts,
       }
    } else {
       if (XIOWITHWR(rw)) {
+	 numrfd = numfd1;
 	 numwfd = numfd1;
-	 numrfd = -1;
       } else {
 	 numrfd = numfd1;
 	 numwfd = -1;

@@ -3968,7 +3968,7 @@ testchain "$N" "$TEST" "test|^test|test|^test|test|^test|test|^test|stdio" "pipe
 esac
 N=$((N+1))
 
-NAME=TOWLONGCHAINS
+NAME=TWOLONGCHAINS
 case "$TESTS" in
 *%$N%*|*%functions%*|*%chain%*|*%$NAME%*)
 TEST="$NAME: four-tests+stdio vs. four-tests+pipe"
@@ -12645,7 +12645,17 @@ esac
 N=$((N+1))
 
 
-echo "summary: $((N-1)) tests, $((numOK+numFAILED+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
+NAME=FD_BI_WRITE
+case  "$TESTS" in
+*%$N%*|*%functions%*|*%chain%*|*%$NAME%*)
+TEST="$NAME: FD address in birectional context is"
+testecho "$N" "$TEST" "FD:0" "FD:1" "-T 2 $opts" "$val_t"
+esac
+N=$((N+1))
+
+
+
+echo "summary: $((N-1)) tests, $((numOK+numFAIL+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
 
 if [ "$numFAIL" -gt 0 ]; then
     echo "FAILED: $listFAIL"
