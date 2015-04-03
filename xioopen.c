@@ -655,7 +655,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	 case XIOCOMM_SOCKETPAIR:
 	 case XIOCOMM_SOCKETPAIRS:
 	    if (xiocommpair(xioopts.pipetype,
-			    (rw0+1)&(XIO_WRONLY+1), (rw0+1)&(XIO_RDONLY+1),
+			    (rw2+1)&(XIO_WRONLY+1), (rw1+1)&(XIO_WRONLY+1),
 			    sfdB!=0, &left, &right,
 			    PF_UNIX, SOCK_STREAM, 0) != 0) {
 	       return NULL;
@@ -664,7 +664,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	 case XIOCOMM_PTY:
 	 case XIOCOMM_PTYS:
 	    if (xiocommpair(xioopts.pipetype,
-			    (rw0+1)&(XIO_WRONLY+1), (rw0+1)&(XIO_RDONLY+1),
+			    (rw2+1)&(XIO_WRONLY+1), (rw1+1)&(XIO_WRONLY+1),
 			    sfdB!=0, &left, &right,
 			    1 /* useptmx */) != 0) {
 	       return NULL;
@@ -672,7 +672,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    break;
 	 default:
 	    if (xiocommpair(xioopts.pipetype,
-			    (rw0+1)&(XIO_WRONLY+1), (rw0+1)&(XIO_RDONLY+1),
+			    (rw2+1)&(XIO_WRONLY+1), (rw1+1)&(XIO_WRONLY+1),
 			    sfdB!=0, &left, &right) != 0) {
 	       return NULL;
 	    }
@@ -687,12 +687,13 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	 /* dual implies (rw0==rw1==XIO_RDWR) */
 	 if (!reverseA) {
 	    /* A is not reverse, but B */
-	    char addr[15];
+#	    define MAXADDR 45
+	    char addr[MAXADDR];
 
 	    xfd0 = xioallocfd();
 	    xioopen_makedual(xfd0);
 	    xfd0->dual.stream[1] = sfdA;
-	    sprintf(addr, "FD:%u", /*0 righttoleft[0]*/left.rfd);
+	    snprintf(addr, MAXADDR, "FD:%u", /*0 righttoleft[0]*/left.rfd);
 	    if ((xfd0->dual.stream[0] =
 		 (xiosingle_t *)socat_open(addr, XIO_WRONLY, 0))
 		== NULL) {
@@ -703,7 +704,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    xfd1 = xioallocfd();
 	    xioopen_makedual(xfd1);
 	    xfd1->dual.stream[1] = sfdB;
-	    sprintf(addr, "FD:%u", /*0 lefttoright[0]*/right.rfd);
+	    snprintf(addr, MAXADDR, "FD:%u", /*0 lefttoright[0]*/right.rfd);
 	    if ((xfd1->dual.stream[0] =
 		 (xiosingle_t *)socat_open(addr, XIO_RDONLY, 0))
 		== NULL) {
@@ -712,12 +713,12 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    }
 	 } else {
 	    /* A is reverse, but B is not */
-	    char addr[15];
+	    char addr[MAXADDR];
 
 	    xfd0 = xioallocfd();
 	    xioopen_makedual(xfd0);
 	    xfd0->dual.stream[0] = sfdB;
-	    sprintf(addr, "FD:%u", /*0 lefttoright[1]*/left.wfd);
+	    snprintf(addr, MAXADDR, "FD:%u", /*0 lefttoright[1]*/left.wfd);
 	    if ((xfd0->dual.stream[1] =
 		 (xiosingle_t *)socat_open(addr, XIO_RDONLY, 0))
 		== NULL) {
@@ -727,7 +728,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    xfd1 = xioallocfd();
 	    xioopen_makedual(xfd1);
 	    xfd1->dual.stream[0] = sfdA;
-	    sprintf(addr, "FD:%u", /*0 righttoleft[1]*/right.wfd);
+	    snprintf(addr, MAXADDR, "FD:%u", /*0 righttoleft[1]*/right.wfd);
 	    if ((xfd1->dual.stream[1] =
 		 (xiosingle_t *)socat_open(addr, XIO_RDONLY, 0))
 		== NULL) {
@@ -743,7 +744,7 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
       } else {
 	 /* either dual with equal directions, or non-dual */
 	 xiofile_t *tfd;	/* temp xfd */
-	 char addr[15];
+	 char addr[MAXADDR];
 	 if (sfdB != NULL) {
 	    /* dual, none or both are reverse */
 	    tfd = xioallocfd();
@@ -760,11 +761,11 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    /* forward */
 	    xfd0 = tfd;
 	    if (rw1 == XIO_RDWR) {
-	       sprintf(addr, "FD:%u:%u", /*0 righttoleft[1]*/right.wfd, /*0 lefttoright[0]*/right.rfd);
+	       snprintf(addr, MAXADDR, "FD:%u:%u", /*0 righttoleft[1]*/right.wfd, /*0 lefttoright[0]*/right.rfd);
 	    } else if (rw1 == XIO_RDONLY) {
-	       sprintf(addr, "FD:%u", /*0 lefttoright[0]*/right.rfd);
+	       snprintf(addr, MAXADDR, "FD:%u", /*0 lefttoright[0]*/right.rfd);
 	    } else {
-	       sprintf(addr, "FD:%u", /*0 righttoleft[1]*/right.wfd);
+	       snprintf(addr, MAXADDR, "FD:%u", /*0 righttoleft[1]*/right.wfd);
 	    }
 	    if ((xfd1 = socat_open(addr, rw1, 0)) == NULL) {
 	       xiofreefd(xfd0);  xiofreefd(xfd2);
@@ -774,11 +775,11 @@ xiofile_t *socat_open(const char *addrs0, int rw, int flags) {
 	    /* reverse */
 	    xfd1 = tfd;
 	    if (rw0 == XIO_RDWR) {
-	       sprintf(addr, "FD:%u:%u", /*0 lefttoright[1]*/left.wfd, /*0 righttoleft[0]*/left.rfd);
+	       snprintf(addr, MAXADDR, "FD:%u:%u", /*0 lefttoright[1]*/left.wfd, /*0 righttoleft[0]*/left.rfd);
 	    } else if (rw0 == XIO_RDONLY) {
-	       sprintf(addr, "FD:%u", /*0 righttoleft[0]*/left.rfd);
+	       snprintf(addr, MAXADDR, "FD:%u", /*0 righttoleft[0]*/left.rfd);
 	    } else {
-	       sprintf(addr, "FD:%u", /*0 lefttoright[1]*/left.wfd);
+	       snprintf(addr, MAXADDR, "FD:%u", /*0 lefttoright[1]*/left.wfd);
 	    }
 	    if ((xfd0 = socat_open(addr, rw0/*0 XIO_RDWR*/, 0)) == NULL) {
 	       xiofreefd(xfd1);  xiofreefd(xfd2);

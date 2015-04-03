@@ -159,6 +159,8 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	       if (total_timeout.tv_sec < 0 ||
 		   total_timeout.tv_sec == 0 && total_timeout.tv_usec < 0) {
 		  Notice("inactivity timeout triggered");
+		  xioclose(sock1);
+		  xioclose(sock2);
 		  free(buff);
 		  return 0;
 	       }
@@ -314,6 +316,8 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 		    xioparams->total_timeout.tv_usec != 0) {
 	    /* there was a total inactivity timeout */
 	    Notice("inactivity timeout triggered");
+	    xioclose(sock1);
+	    xioclose(sock2);
 	    free(buff);
 	    return 0;
 	 }

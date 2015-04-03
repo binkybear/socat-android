@@ -223,6 +223,11 @@ corrections:
 	simulated by appropriate setting.
 	Thanks to Youfu Zhang for reporting issue with option raw.
 
+	ioctl-intp
+	-T hang
+	mixed directions
+	socat_open sprintf overflow
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
