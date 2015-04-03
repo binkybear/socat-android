@@ -137,12 +137,10 @@ int _socat(xiofile_t *xfd1, xiofile_t *xfd2) {
 	  XIO_RDSTREAM(sock2)->eof <= 1) {
       struct timeval timeout, *to = NULL;
 
-      Debug4("data loop: sock1->eof=%d, sock2->eof=%d, 1->closing=%d, 2->closing=%d, wasaction=%d, total_to={"F_tv_sec"."F_tv_usec"}",
+      Debug7("data loop: sock1->eof=%d, sock2->eof=%d, 1->closing=%d, 2->closing=%d, wasaction=%d, total_to={"F_tv_sec"."F_tv_usec"}",
 	     XIO_RDSTREAM(sock1)->eof, XIO_RDSTREAM(sock2)->eof,
-	     sock1->stream.closing, sock2->stream.closing);
-      Debug6("wasaction=%d, total_to={"F_tv_sec"."F_tv_usec"}",
-	     wasaction, total_timeout.tv_sec, total_timeout.tv_usec, wasaction,
-             total_timeout.tv_sec, total_timeout.tv_usec);
+	     sock1->stream.closing, sock2->stream.closing,
+	     wasaction, total_timeout.tv_sec, total_timeout.tv_usec);
 
       /* for ignoreeof */
       if (polling) {

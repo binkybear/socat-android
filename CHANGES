@@ -245,6 +245,8 @@ corrections:
 	Options shut-none, shut-down, shut-close all might not have worked
 	correctly. Thanks to Ray Song for reporting this issue.
 
+	Fixed Debug arguments issue in _socat()
+
 porting:
 	Red Hat issue 1020203: configure checks fail with some compilers.
 	Use case: clang
