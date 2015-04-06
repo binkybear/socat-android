@@ -1,6 +1,6 @@
 
 %define majorver 2.0
-%define minorver 0-b7
+%define minorver 0-b8
 
 Summary: socat - multipurpose relay
 Name: socat

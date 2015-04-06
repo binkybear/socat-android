@@ -570,7 +570,6 @@ union integral {
 } ;
 
 /* some aliases */
-#define u_off u_long	/* please report when this causes problems */
  
 #if HAVE_BASIC_OFF_T==3
 #  define u_off u_int
