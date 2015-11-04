@@ -79,6 +79,9 @@ const struct xioaddrname address_names[] = {
 #if WITH_GOPEN
    { "gopen",		xioaddrs_gopen },
 #endif
+#if WITH_HEX
+   { "hex",		xioaddrs_hex },
+#endif
 #if WITH_INTERFACE
    { "if",		xioaddrs_interface },
 #endif

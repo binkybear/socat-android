@@ -1,5 +1,5 @@
 /* source: xiomodes.h */
-/* Copyright Gerhard Rieger 2001-2008 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 #ifndef __xiomodes_h_included
@@ -47,5 +47,6 @@
 #include "xio-streams.h"
 #include "xio-nop.h"
 #include "xio-test.h"
+#include "xio-hex.h"
 
 #endif /* !defined(__xiomodes_h_included) */

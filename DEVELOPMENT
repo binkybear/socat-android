@@ -15,9 +15,9 @@ ADDING A NEW ADDRESS TYPE:
 
 * Create a new record of struct addrdesc in xio-newaddr.c, with declaration in xio-newaddr.h.
 
-* Make a new entry to addressnames[] in xioopen.c with the addresses main name
+* Make a new entry to address_names[] in xioopen.c with the addresses main name
 and maybe with alias names. Keep this array ASCII sorted, without uppercase
-chars.
+chars!
 
 * config.h.in: #undef WITH_NEWADDR
 
@@ -32,6 +32,14 @@ Do not forget the following option processing calls:
 All groups: _xio_openlate()
 Group FD: applyopts_cloexec()
 Group NAMED: applyopts_file() for phases PREOPEN, OPEN, and FD
+
+* Add .c and .h file to the lists in Makefile.in
+
+* Add .h file inclusion to xiomodes.h
+
+* If your module needs to work with the data (eg.conversion):
+in xio.h declare XIOREAD_NEWADDR, XIOWRITE_NEWADDR, and the combination XIODATA_NEWADDR;
+write functions xioread_newaddr() and/or xiowrite_newaddr() and add DATA dependent calls to xioread.c and to xiowerite.c
 
 * Describe a tested example in file EXAMPLES, and maybe in the socat manpage
 source.

@@ -539,6 +539,11 @@ void socat_version(FILE *fd) {
 #else
    fputs("  #undef WITH_LIBWRAP\n", fd);
 #endif
+#ifdef WITH_HEX
+   fprintf(fd, "  #define WITH_HEX %d\n", WITH_HEX);
+#else
+   fputs("  #undef WITH_HEX\n", fd);
+#endif
 #ifdef WITH_SYCLS
    fprintf(fd, "  #define WITH_SYCLS %d\n", WITH_SYCLS);
 #else

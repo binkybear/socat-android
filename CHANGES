@@ -1,4 +1,8 @@
 
+features:
+	Added address type HEX that converts binary data to hexadecimal stream
+	and vice versa.
+
 ####################### V 2.0.0-b8:
 
 security:

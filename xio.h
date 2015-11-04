@@ -70,6 +70,7 @@ struct opt;
 #define XIOREAD_READLINE	0x5000	/* ... */
 #define XIOREAD_OPENSSL		0x6000	/* SSL_read() */
 #define XIOREAD_TEST		0x7000	/* xioread_test() */
+#define XIOREAD_HEX		0x9000	/* xioread_hex() */
 #define XIODATA_WRITEMASK	0x0f00	/* mask for basic r/w method */
 #define XIOWRITE_STREAM		0x0100	/* write() (default) */
 #define XIOWRITE_SENDTO		0x0200	/* sendto() */
@@ -79,6 +80,7 @@ struct opt;
 #define XIOWRITE_OPENSSL	0x0600	/* SSL_write() */
 #define XIOWRITE_TEST		0x0700	/* xiowrite_test() */
 #define XIOWRITE_TESTREV	0x0800	/* xiowrite_testrev() */
+#define XIOWRITE_HEX		0x0900	/* xiowrite_hex() */
 /* modifiers to XIODATA_READ_RECV */
 #define XIOREAD_RECV_CHECKPORT	0x0001	/* recv, check peer port */
 #define XIOREAD_RECV_CHECKADDR	0x0002	/* recv, check peer address */
@@ -104,6 +106,7 @@ struct opt;
 #define XIODATA_TEST		(XIOREAD_TEST|XIOWRITE_TEST)
 #define XIODATA_TESTUNI		XIOWRITE_TEST
 #define XIODATA_TESTREV		XIOWRITE_TESTREV
+#define XIODATA_HEX		(XIOREAD_HEX|XIOWRITE_HEX)
 
 /* XIOSHUT_* define the actions on shutdown of the address */
 /*  */
@@ -469,6 +472,11 @@ typedef struct single {
 	 int level;
       } gzip;
 #endif /* _WITH_GZIP */
+#if WITH_HEX
+      struct {
+	 unsigned char single;	/* a char waiting for the next for conversion */
+      } hex;
+#endif /* WITH_HEX */
    } para;
 } xiosingle_t;
 

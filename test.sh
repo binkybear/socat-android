@@ -12697,6 +12697,79 @@ PORT=$((PORT+1))
 N=$((N+1))
 
 
+# test the HEX feature (conversion binary to hexadecimal)
+NAME=BIN_HEX
+case "$TESTS" in
+*%$N%*|*%functions%*|*%hex%*|*%$NAME%*)
+TEST="$NAME: test the binary-hexadecimal conversions"
+# send a couple of simple binary packets and check if the result is correct
+if ! eval $NUMCOND; then :; else
+tf="$td/test$N.stdout"
+te="$td/test$N.stderr"
+tdiff="$td/test$N.diff"
+da="test$N $(date) $RANDOM"
+CMD0="$TRACE $SOCAT $opts -u - HEX|-"
+printf "test $F_n $TEST... " $N
+{ echo -en "\xff\x00"; usleep $MICROS; echo -en "\xa5\x5a"; usleep $MICROS; } | $CMD0 >"${tf}0" 2>"${te}0"
+rc1=$?
+if [ $rc1 -ne 0 ]; then
+    $PRINTF "$FAILED\n"
+    echo "$CMD0"
+    cat "${te}0"
+    numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
+elif echo -en "ff00a55a" |diff - "${tf}0" >"$tdiff"; then
+    $PRINTF "$OK\n"
+    numOK=$((numOK+1))
+else
+    $PRINTF "$FAILED\n"
+    echo "$CMD0"
+    echo "diff:"
+    cat "$tdiff"    
+fi
+fi # NUMCOND
+ ;;
+esac
+#PORT=$((PORT+1))
+N=$((N+1))
+
+# test the HEX feature (conversion hexadecimal to binary)
+NAME=HEX_BIN
+case "$TESTS" in
+*%$N%*|*%functions%*|*%hex%*|*%$NAME%*)
+TEST="$NAME: test the hexadecimal-binary conversions"
+# send a couple of simple hexadecimal packets and check if the result is correct
+if ! eval $NUMCOND; then :; else
+tf="$td/test$N.stdout"
+te="$td/test$N.stderr"
+tdiff="$td/test$N.diff"
+da="test$N $(date) $RANDOM"
+CMD0="$TRACE $SOCAT $opts -U - HEX|-"
+printf "test $F_n $TEST... " $N
+{ echo -en "ff00"; usleep $MICROS; echo -en "a5"; usleep $MICROS; echo -en " 5a "; usleep $MICROS; echo -en "  "; usleep $MICROS; echo -en " "; usleep $MICROS; echo -en "61 "; } | $CMD0 2>"${te}0" |od -t x1 >"${tf}0.od"
+rc1=$?
+if [ $rc1 -ne 0 ]; then
+    $PRINTF "$FAILED\n"
+    echo "$CMD0"
+    cat "${te}0"
+    numFAIL=$((numFAIL+1))
+    listFAIL="$listFAIL $N"
+elif echo -en "\xff\x00\xa5\x5a\x61" |od -t x1 |diff - "${tf}0.od" >"$tdiff"; then
+    $PRINTF "$OK\n"
+    numOK=$((numOK+1))
+else
+    $PRINTF "$FAILED\n"
+    echo "$CMD0"
+    echo "diff:"
+    cat "$tdiff"    
+fi
+fi # NUMCOND
+ ;;
+esac
+#PORT=$((PORT+1))
+N=$((N+1))
+
+
 echo "summary: $((N-1)) tests, $((numOK+numFAIL+numCANT)) selected; $numOK ok, $numFAIL failed, $numCANT could not be performed"
 
 if [ "$numFAIL" -gt 0 ]; then

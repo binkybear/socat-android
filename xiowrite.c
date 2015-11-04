@@ -1,5 +1,5 @@
 /* source: xiowrite.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended write function */
@@ -9,6 +9,7 @@
 #include "xioopen.h"
 
 #include "xio-test.h"
+#include "xio-hex.h"
 #include "xio-readline.h"
 #include "xio-openssl.h"
 
@@ -137,6 +138,12 @@ ssize_t xiowrite(xiofile_t *file, const void *buff, size_t bytes) {
       /* this function prints its own error messages */
       return xiowrite_testrev(pipe, buff, bytes);
 #endif /* WITH_TEST */
+
+#if WITH_HEX
+   case XIOWRITE_HEX:
+      /* this function prints its own error messages */
+      return xiowrite_hex(pipe, buff, bytes);
+#endif /* WITH_HEX */
 
 #if WITH_OPENSSL
    case XIOWRITE_OPENSSL:

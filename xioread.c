@@ -1,5 +1,5 @@
 /* source: xioread.c */
-/* Copyright Gerhard Rieger 2001-2012 */
+/* Copyright Gerhard Rieger */
 /* Published under the GNU General Public License V.2, see file COPYING */
 
 /* this is the source of the extended read function */
@@ -10,6 +10,7 @@
 #include "xio-termios.h"
 #include "xio-socket.h"
 #include "xio-test.h"
+#include "xio-hex.h"
 #include "xio-readline.h"
 #include "xio-openssl.h"
 
@@ -130,6 +131,15 @@ ssize_t xioread(xiofile_t *file, void *buff, size_t bufsiz) {
       }
       break;
 #endif /* WITH_TEST */
+
+#if WITH_HEX
+   case XIOREAD_HEX:
+      /* this function prints its error messages */
+      if ((bytes = xioread_hex(pipe, buff, bufsiz)) < 0) {
+	 return -1;
+      }
+      break;
+#endif /* WITH_HEX */
 
 #if WITH_OPENSSL
    case XIOREAD_OPENSSL:
